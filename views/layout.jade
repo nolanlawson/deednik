@@ -1,0 +1,16 @@
+!!!5
+html
+  head
+    title #{appName}
+    link(href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css",rel="stylesheet")
+    link(href='styles/application.css',rel="stylesheet")
+    link(rel='shortcut icon',type='image/x-icon',href='images/favicon.ico')
+  body
+    block content
+    footer
+      p
+        :markdown
+          Created by [Nolan Lawson](http://nolanlawson.com).
+          Version #{appVersion}.
+    script(src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js")
+    
