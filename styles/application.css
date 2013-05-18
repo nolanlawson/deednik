@@ -22,3 +22,20 @@ h1 {
 h3 {
     text-align : center;
 }
+
+#main-title {
+    padding-bottom: 0.5em;
+}
+
+#main-title span {
+    font-family: 'Chela One', cursive;
+    font-size : 1.75em;
+    background : #d64242;
+    text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
+    padding : 0.1em 0.5em;
+    border-radius: 0.1em;
+    -webkit-transform: skew(20deg);
+    -moz-transform: skew(20deg);
+    -o-transform: skew(20deg);
+    
+}
