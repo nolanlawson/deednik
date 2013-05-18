@@ -1,30 +1,53 @@
-/*global require describe it console expect*/
+/*global require describe it expect waitsFor runs beforeEach afterEach*/
 (function(){
 
 "use strict";
 
-var DAO = require('../server/DAO.js'),
-    Q = require('q');
+var DAO = require('../server/DAO.js');  
 
-
+describe("DAO test suite", function() {
     
-  var dao = DAO.DAO({production : false});
-  
-  Q.nfcall(dao.init).
-  then(function(){
-      return Q.nfcall(console.log, "i'm here");
-  });
-  /*
-  dao.init(function(){
-      console.log("i'm here!!");
-      describe("DAO test suite", function() {
-          it("contains spec with an expectation", function() {
-              console.log("i'm here too!!");
-            expect(true).toBe(true);
+    var dao;
+    
+    beforeEach(function(){
+        // create the database and check that it's initialized
+        runs(function(){
+            dao = DAO.DAO({production : false});
+            expect(dao.initialized).toBe(false);
+            dao.init();
+        });
+
+        waitsFor(function(){
+            return dao.initialized;
+        }, "DAO never ititialized", 10000);
+
+        runs(function(){
+            expect(dao.initialized).toBe(true);
+        });        
+    });
+    
+    afterEach(function(){
+        // destroy the database we used for the tests
+        
+        runs(function(){
             dao.destroy();
-          });
-      });
-  });*/
+        });
+
+        waitsFor(function(){
+            return dao.destroyed;
+        }, "DAO never destroyed", 10000);
+
+        runs(function(){
+            expect(dao.destroyed).toBe(true);
+        });        
+    });
+    
+  it("contains spec with an expectation", function() {
+    
+
+  });
+});
+
   
 
 /*
