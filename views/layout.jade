@@ -12,5 +12,10 @@ html
         :markdown
           Created by [Nolan Lawson](http://nolanlawson.com).
           Version #{appVersion}.
+    script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
+    script
+      window.jQuery || document.write('<script src="js/lib/jquery-1.8.3.min.js">\x3C/script>')
     script(src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js")
+    script
+      window.jQuery.fn.modal || document.write('<script src="js/lib/bootstrap-1.8.3.min.js">\x3C/script>')
     

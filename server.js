@@ -18,7 +18,11 @@ var
         NodeCache   = require("node-cache"),
         querystring = require('querystring'),
         Q           = require('q'),
-        _           = require('underscore');
+        _           = require('underscore'),
+        
+        // in-app dependencies
+        DAO         = require('./server/DAO.js')
+        ;
         
 
 
@@ -26,7 +30,11 @@ app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use("/styles", express['static'](__dirname + '/styles'));
 app.use("/images", express['static'](__dirname + '/images'));
+app.use("/js", express['static'](__dirname + '/js'));
 
+var dao = DAO.DAO();
+
+dao.init();
 
 // redirect to the main app path
 app.get('/', function(req, res){
@@ -36,7 +44,6 @@ app.get('/', function(req, res){
             appName : APP_NAME
         }
     );
-    res.redirect('/image-rater/');
 });
 
 app.listen(port);
