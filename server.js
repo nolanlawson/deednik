@@ -32,7 +32,7 @@ app.use("/styles", express['static'](__dirname + '/styles'));
 app.use("/images", express['static'](__dirname + '/images'));
 app.use("/js", express['static'](__dirname + '/js'));
 
-var dao = DAO.DAO();
+var dao = DAO.DAO({production : true});
 
 dao.init();
 

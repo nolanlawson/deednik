@@ -11,6 +11,7 @@
 		"q"           : "*",
 		"underscore"  : "*",
 		"nano"        : "*",
-		"node-cache"  : "*"
+		"node-cache"  : "*",
+		"jasmine-node": "*"
 	}
 }
