@@ -1,4 +1,4 @@
-/*global require console module emit*/
+/*global require console module emit sum*/
 (function(){
 
 "use strict";
@@ -70,6 +70,30 @@ module.exports.DAO = function(options) {
             });
         },
         
+        /* save an object, hibernate style: save the object and then set the generated id and rev*/
+        save : function(object) {
+            
+            Q.nfcall(self.db.insert, object).
+            then(function(body){
+                if (body && body[0] && body[0].ok) {
+                    object._id = body[0].id;
+                    object._rev = body[0].rev;
+                } else {
+                    console.log('improper body object: ' + JSON.stringify(body));
+                }
+            }, function(err){
+                console.log('save error: ' + err);
+            });
+        },
+        
+        findById : function(id) {
+            return Q.nfcall(self.db.get, id, { revs_info: false });
+        },
+        
+        findByUserId : function(userId) {
+            return Q.nfcall(self.db.view, 'by_user_id', 'by_user_id', { include_docs: true, key : userId });
+        },
+        
         //
         // private functions
         //
@@ -87,13 +111,53 @@ module.exports.DAO = function(options) {
             });
         },
         createViews : function() {
-            return Q.nfcall(self.db.insert, { 
+            return Q.allResolved(
+                Q.nfcall(self.db.insert, { 
                     language : 'javascript',
                     views    : 
-                        { "by_name_and_city": 
-                            { "map": function(doc) { emit([doc.name, doc.city], doc._id); } } 
+                        { "num_upvotes_by_post": 
+                            { 
+                                'map'    : function(doc) {
+                                    if (doc.type === 'vote' && doc.positive) {
+                                        emit(doc.postId, 1); 
+                                    }
+                                },
+                                'reduce' : function (key, values) {
+                                   return sum(values);
+                                }
+                            } 
                         }
-                  }, '_design/by_name_and_city');
+                  }, '_design/num_upvotes_by_post'),
+                  Q.nfcall(self.db.insert, { 
+                    language : 'javascript',
+                    views    : 
+                        { "by_user_id": 
+                            { 
+                                'map'    : function(doc) {
+                                    if (doc.type === 'user') {
+                                        emit(doc.userId, null); 
+                                    }
+                                }
+                            } 
+                        }
+                  }, '_design/by_user_id'),                  
+                  Q.nfcall(self.db.insert, { 
+                      language : 'javascript',
+                      views    : 
+                          { "num_downvotes_by_post": 
+                              { 
+                                  'map'    : function(doc) {
+                                      if (doc.type === 'vote' && !doc.positive) {
+                                          emit(doc.postId, 1); 
+                                      }
+                                  },
+                                  'reduce' : function (key, values) {
+                                     return sum(values);
+                                  }
+                              } 
+                          }
+                    }, '_design/num_downvotes_by_post')
+            );               
         }
     };
     return self;
