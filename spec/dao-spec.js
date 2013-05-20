@@ -3,7 +3,11 @@
 
 "use strict";
 
-var DAO  = require('../server/db/DAO.js'),
+var 
+    
+    Q    = require('q'),
+    
+    DAO  = require('../server/db/DAO.js'),
     User = require('../server/model/User.js'),
     Post = require('../server/model/Post.js'),
     Vote = require('../server/model/Vote.js')
@@ -88,36 +92,25 @@ describe("DAO test suite", function() {
         expect(vote._rev).toEqual(jasmine.any(String));
     });
     
-    var checked = 0;
+    var checked = false;
     
     runs(function(){
         
-        dao.findById(user._id).
-        then(function(body){
-            expect(body[0]._id).toEqual(user._id);
-            checked += 1;
-        });
-        
-        dao.findByUserId(user.userId).
-        then(function(body){
-            expect(body[0].rows[0].doc._id).toEqual(user._id);
-            checked += 1;
-        });
-        
-        dao.findById(post._id).
-        then(function(body){
-            expect(body[0]._id).toEqual(post._id);
-            checked += 1;
-        });
-        
-        dao.findById(vote._id).
-        then(function(body){
-            expect(body[0]._id).toEqual(vote._id);
-            checked += 1;
+        Q.allResolved([
+            dao.findById(user._id),
+            dao.findByUserId(user.userId),
+            dao.findById(post._id),
+            dao.findById(vote._id)
+        ]).spread(function(fetchedUser1, fetchedUser2, fetchedPost, fetchedVote) {
+            expect(fetchedUser1[0]._id).toEqual(user._id);
+            expect(fetchedUser2[0].rows[0].doc._id).toEqual(user._id);
+            expect(fetchedPost[0]._id).toEqual(post._id);
+            expect(fetchedVote[0]._id).toEqual(vote._id);
+            checked = true;
         });
     });
     
-    waitsFor(function(){return checked === 4;}, "never checked", 10000);
+    waitsFor(function(){return checked;}, "never checked", 10000);
     
   });
   
