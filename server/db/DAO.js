@@ -23,7 +23,7 @@
 
         dbName = options.production ? 
                 PRODUCTION_DB_NAME : 
-                'unit_test_' + new Date().getTime() + "_" + Math.floor((Math.random() * 1000));
+                'unit_test_' + new Date().getTime() + "_" + Math.floor((Math.random() * 1000000));
 
         //
         // private variables
@@ -182,7 +182,7 @@
           * returns a promise for a list of posts
           */
         self.findPostsByTimestampSince = function(timestamp, limit) {
-            var params = {startkey : timestamp, reverse : true, limit : limit};
+            var params = {startkey : timestamp, reverse : true, limit : (limit || 10)};
             return queryViewAndPromise('by_timestamp', params, true);
         };        
     }

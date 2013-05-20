@@ -221,8 +221,10 @@ describe("DAO test suite", function() {
     
     //waitsFor(function(){return false;}, 'sleep', 30000);
     
+    var checked = false;
+    
     runs(function(){
-        Q.allResolved([
+        Q.all([
             dao.findPostsByTimestampSince(0, 10),
             dao.findPostsByTimestampSince(1299999999, 10),
             dao.findPostsByTimestampSince(1300000000, 10),
@@ -230,13 +232,19 @@ describe("DAO test suite", function() {
             dao.findPostsByTimestampSince(1400000000, 10),
             dao.findPostsByTimestampSince(1499999999, 10),
             dao.findPostsByTimestampSince(1500000000, 10),
-            dao.findPostsByTimestampSince(1500000001, 10)
-        ]).then(function(results){
-            expect(results.map(function(element){return element.valueOf().length;})).toBe([3, 3, 3, 2, 2, 1, 1, 0]);
+            dao.findPostsByTimestampSince(1500000001, 10),
+            dao.findPostsByTimestampSince(1600000000, 10)
+        ]).then(function(results) {
+            expect(results.map(function(element){
+                return element.valueOf().length;
+            })).toEqual([3, 3, 3, 2, 2, 1, 1, 0, 0]);
+            checked = true;
         }, function(err){
-            self.fail(new Error(err));
+            self.fail(new Error('error in findPostsByTimestampSince: ' + err));
         }).done();
     });
+    
+    waitsFor(function(){return checked;});
     
   });
   
