@@ -3,9 +3,9 @@
 
 "use strict";
 
-function User(userId) {
+function User(userGuid) {
     this.type = "user";
-    this.userId = userId;
+    this.userGuid = userGuid;
 }
 
 module.exports = User;

@@ -115,17 +115,57 @@
             });
         };
 
+        /*
+         * returns a promise for the object body
+         */
         self.findById = function(id) {
-            return Q.nfcall(db.get, id, {
-                revs_info: false
+            var deferred = Q.defer();
+            db.get(id, { revs_info: false }, function(err, body) {
+                if (err) {
+                    deferred.reject(new Error(err));
+                } else if (!body) {
+                    deferred.reject(new Error("unacceptable body received"));
+                } else {
+                    deferred.resolve(body);
+                }
+            });
+            return deferred.promise;
+        };
+        
+        /*
+         * deletes the object from couchdb based on the _id and _rev.
+         * sets "deleted" on the object
+         */
+        self.remove = function(object) {
+            db.destroy(object._id, object._rev, function(err){
+                if (err) {
+                    console.log('unable to remove object: ' + err);
+                } else {
+                    object.deleted = true;
+                }
             });
         };
-
-        self.findByUserId = function(userId) {
-            return Q.nfcall(db.view, 'by_user_id', 'by_user_id', {
-                include_docs: true,
-                key: userId
+        
+        
+        /*
+         * returns a promise for the object body
+         */
+        self.findUserByUserGuid = function(userGuid) {
+            var deferred = Q.defer();
+            db.view('by_user_guid', 'by_user_guid', {
+                include_docs : true,
+                key          : userGuid
+            }, function(err, body) {
+                if (err) {
+                    deferred.reject(new Error(err));
+                } else if (!(body && body.rows && body.rows[0] && body.rows[0].doc)) {
+                    deferred.reject(new Error("unacceptable body received: " + JSON.stringify(body)));
+                } else {
+                    deferred.resolve(body.rows[0].doc);
+                }
             });
+            
+            return deferred.promise;
         };
     }
 

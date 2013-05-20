@@ -28,10 +28,10 @@
             return sum(values);
         }
     }, {
-        name: 'by_user_id',
+        name: 'by_user_guid',
         map: function(doc) {
-            if (doc.type === 'user' && doc.userId) {
-                emit(doc.userId, null);
+            if (doc.type === 'user' && doc.userGuid) {
+                emit(doc.userGuid, null);
             }
         }
     }];

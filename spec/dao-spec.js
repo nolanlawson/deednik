@@ -1,4 +1,4 @@
-/*global require describe it expect waitsFor runs beforeEach afterEach jasmine*/
+/*global require describe it expect waitsFor runs beforeEach afterEach jasmine console*/
 (function(){
 
 "use strict";
@@ -96,17 +96,19 @@ describe("DAO test suite", function() {
     
     runs(function(){
         
-        Q.allResolved([
+        Q.all([
             dao.findById(user._id),
-            dao.findByUserId(user.userId),
+            dao.findUserByUserGuid(user.userGuid),
             dao.findById(post._id),
             dao.findById(vote._id)
         ]).spread(function(fetchedUser1, fetchedUser2, fetchedPost, fetchedVote) {
-            expect(fetchedUser1[0]._id).toEqual(user._id);
-            expect(fetchedUser2[0].rows[0].doc._id).toEqual(user._id);
-            expect(fetchedPost[0]._id).toEqual(post._id);
-            expect(fetchedVote[0]._id).toEqual(vote._id);
+            expect(fetchedUser1._id).toEqual(user._id);
+            expect(fetchedUser2._id).toEqual(user._id);
+            expect(fetchedPost._id).toEqual(post._id);
+            expect(fetchedVote._id).toEqual(vote._id);
             checked = true;
+        }).then(console.log, function(err){
+            console.log('got error in chain: ' + err);
         });
     });
     
@@ -114,10 +116,41 @@ describe("DAO test suite", function() {
     
   });
   
-  it("deletes users, posts, and votes from the database", function() {
+  it("deletes users from the database", function() {
+      var self = this;
       
+      var user = new User('fooId');
       
+      runs(function() {
+          dao.save(user);
+      });
+
+      waitsFor(function(){
+          return user._id;
+      }, "user._id never added", 10000);
       
+      runs(function(){
+          dao.remove(user);
+      });
+      
+      waitsFor(function(){
+          return user.deleted;
+      });
+      
+      runs(function(){
+          expect(user.deleted).toBe(true);
+          dao.findUserByUserGuid(user.userGuid).then(function(){
+              self.fail(new Error('user not deleted'));
+          }, function(err){
+              expect(err).not.toBe(null);
+          });
+          
+          dao.findById(user._id).then(function(){
+                self.fail(new Error('user not deleted'));
+            }, function(err){
+                expect(err).not.toBe(null);
+            });
+      });
   });
 });
 
