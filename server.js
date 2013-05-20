@@ -8,7 +8,7 @@ var
 
         // constants
         APP_NAME        = 'One Good Turn',
-        APP_VERSION     = '1.0',
+        APP_VERSION     = '0.0.1',
         PRODUCTION      = true,
         MAX_POST_SIZE   = 1024,
         PORT            = 3000,

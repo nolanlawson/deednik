@@ -2,7 +2,7 @@
  * Super cool socket controller for the stream of user data coming from the client.
  */
 /*jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, strict:true, browser:true */
-/*global angular console moment _*/
+/*global angular console moment*/
 
 (function(){
 
@@ -21,9 +21,7 @@ angular.module('one-good-turn').controller('StreamController', ['$scope', 'socke
     
     socket.on('get:refresh', function(posts){
         console.log('socket refresh!');
-        _.forEach(posts, function(post){
-            $scope.postsToShow.push(post);
-        });
+        $scope.postsToShow = posts;
     });
     
     socket.on('new:post', function(post){

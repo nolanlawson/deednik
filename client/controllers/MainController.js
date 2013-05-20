@@ -49,7 +49,8 @@
         };
 
         $scope.submit = function() {
-            if ($scope.postContent.length < $scope.MAX_CONTENT_LENGTH) {
+            if ($scope.postContent.length > 0 && $scope.postContent.length < $scope.MAX_CONTENT_LENGTH) {
+                $scope.disabled = true;
                 // TODO: post instead of get?
                 var url = '/jsapi-v1/insertPost?postContent=' + encodeURIComponent($scope.postContent);
                 $http({
@@ -59,10 +60,12 @@
                 success(function() {
                     console.log('posted successfully');
                     $scope.postContent = '';
+                    $scope.disabled = false;
                 }).
                 error(function(data, status, headers, config) {
                     // todo: handle a fail more gracefully
                     console.log('failed to post, got args: ' + JSON.stringify([data, status, headers, config]));
+                    $scope.disabled = false;
                 });
             }
         };
