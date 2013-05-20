@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     //
     jshint: {
         server : {
-            src     : ['Gruntfile.js', 'server/**/*.js']
+            src     : ['Gruntfile.js', 'server.js', 'server/**/*.js']
         },
         client : {
             src     : ['client/**/*.js', '!**/*.min.js']
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
           }
     },  
     watch : {
-        files : ['server/**/*.js', 'client/**/*.js', 'styles/**/*.scss'],
+        files : ['server.js', 'server/**/*.js', 'client/**/*.js', 'styles/**/*.scss'],
         tasks : ['jshint', 'jasmine_node', 'concat', 'uglify', 'jasmine', 'sass']
     }
      

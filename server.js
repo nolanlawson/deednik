@@ -14,11 +14,11 @@ var
         // imports
         express     = require('express'), 
         app         = express(),
-        http        = require('http'),
-        NodeCache   = require("node-cache"),
-        querystring = require('querystring'),
-        Q           = require('q'),
-        _           = require('underscore'),
+        //http        = require('http'),
+        //NodeCache   = require("node-cache"),
+        //querystring = require('querystring'),
+        //Q           = require('q'),
+        //_           = require('underscore'),
         path        = require('path'),
         
         // in-app dependencies
