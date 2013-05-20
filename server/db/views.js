@@ -34,6 +34,13 @@
                 emit(doc.userGuid, null);
             }
         }
+    }, {
+        name: 'by_user_id_and_post_id',
+        map: function(doc) {
+            if (doc.type === 'vote' && doc.userId && doc.postId) {
+                emit([doc.userId, doc.postId], null);
+            }
+        }
     }];
     
 })();

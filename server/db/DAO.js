@@ -69,6 +69,21 @@
                 }, ('_design/' + view.name));
             }));
         }
+        
+        function queryViewAndPromise(viewName, viewParams) {
+            var deferred = Q.defer();
+            db.view(viewName, viewName, _.extend({include_docs : true },viewParams), function(err, body) {
+                if (err) {
+                    deferred.reject(new Error(err));
+                } else if (!(body && body.rows && body.rows[0] && body.rows[0].doc)) {
+                    deferred.reject(new Error("unacceptable body received: " + JSON.stringify(body)));
+                } else {
+                    deferred.resolve(body.rows[0].doc);
+                }
+            });
+            
+            return deferred.promise;
+        }
 
         //
         // public functions
@@ -151,21 +166,14 @@
          * returns a promise for the object body
          */
         self.findUserByUserGuid = function(userGuid) {
-            var deferred = Q.defer();
-            db.view('by_user_guid', 'by_user_guid', {
-                include_docs : true,
-                key          : userGuid
-            }, function(err, body) {
-                if (err) {
-                    deferred.reject(new Error(err));
-                } else if (!(body && body.rows && body.rows[0] && body.rows[0].doc)) {
-                    deferred.reject(new Error("unacceptable body received: " + JSON.stringify(body)));
-                } else {
-                    deferred.resolve(body.rows[0].doc);
-                }
-            });
-            
-            return deferred.promise;
+            return queryViewAndPromise('by_user_guid', {key : userGuid});
+        };
+        
+        /*
+         * returns a promise for the object body
+         */
+        self.findVoteByUserIdAndPostId = function(userId, postId) {
+            return queryViewAndPromise('by_user_id_and_post_id', {key : [userId, postId]});
         };
     }
 
