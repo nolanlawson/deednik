@@ -1,6 +1,8 @@
-$bg     : #dfdfdf;
-$border : #333;
-$crimson: #d64242;
+/* colors */
+$bg         : #dfdfdf;
+$border     : #333;
+$crimson    : #d64242;
+$textBorder : #fff;
 
 html {
     background: $bg;
@@ -15,7 +17,7 @@ body {
     font-size : 1.1em;
 }
 
-.container {
+#main-container {
     max-width : 940px;
 }
 
@@ -28,13 +30,14 @@ h3 {
 }
 
 #main-title {
+    padding-top: 0.5em;
     padding-bottom: 0.5em;
     
     span {
         font-family: 'Chela One', cursive;
-        font-size : 1.75em;
+        font-size : 2em;
         background : $crimson;
-        text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
+        text-shadow: -1px 0 $textBorder, 0 1px $textBorder, 1px 0 $textBorder, 0 -1px $textBorder;
         padding : 0.1em 0.5em;
         border-radius: 0.1em;
         -webkit-transform: skew(20deg);

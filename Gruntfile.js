@@ -24,10 +24,10 @@ module.exports = function(grunt) {
     // concat all client-side javascript
     concat: {
         options: {
-          separator: ';'
+          separator: '\n;\n'
         },
         dist: {
-          src: ['client/application.js'],
+          src: ['client/application.js', 'client/controllers/*.js'],
           dest: 'build/js/application-concat.js'
         }
       },
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
     // run client-side jasmine tests
     jasmine: {
           '1goodturn': {
-            src : ['client/**/*.js', '!**/*/*.min.js'],
+            src : ['build/client/**/*.js'],
             options: {
               specs : 'spec/client/**/*.spec.js'
             }

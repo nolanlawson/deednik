@@ -4,5 +4,18 @@ block content
       h1(id='main-title')
         span #{appName}
       h3 Stories of humans helping humans
-    .container TODO text here
+    .container#main-container(ng-controller="MainController")
+      .navbar.navbar-inverse.navbar-fixed-top(ng-controller="TabController")
+        .navbar-inner
+          .container
+            .btn.btn-navbar(data-toggle='collapse',data-target='.nav-collapse',type='div')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.brand.main-logo(href='#/home',ng-click='selectedTabId="home"') #{appName}
+            .ng-cloak.nav-collapse.collapse
+              ul.nav
+                li(ng-click="$parent.selectedTabId = tab.id",ng-repeat="tab in tabs",ng-class="{active: tab.id == $parent.selectedTabId}")
+                  a(href='#',ng-href='{{tab.getHref()}}',ng-bind='tab.title')
     
+      .main-view(ng-view)

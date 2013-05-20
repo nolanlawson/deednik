@@ -10,7 +10,8 @@ var
         APP_NAME        = 'One Good Turn',
         APP_VERSION     = '1.0',
         MAX_POST_SIZE   = 1024,
-        port = 3000,
+        PORT            = 3000,
+        INFO            = {appName : APP_NAME, appVersion : APP_VERSION}, 
         
         // imports
         express     = require('express'), 
@@ -27,13 +28,12 @@ var
         Post        = require('./server/model/Post.js')
         ;
         
-
-
 app.set('view engine', 'jade');
 app.set('views', path.join(__dirname, 'views'));
 app.use("/css", express['static'](path.join(__dirname, 'build/css')));
 app.use("/images", express['static'](path.join(__dirname, 'images')));
 app.use("/js", express['static'](path.join(__dirname, 'build/js')));
+app.locals.pretty = true;
 
 var dao = new DAO({production : true});
 
@@ -41,20 +41,20 @@ dao.init();
 
 // redirect to the main app path
 app.get('/', function(req, res){
-    res.render('index', 
-        { 
-            appVersion : APP_VERSION,
-            appName : APP_NAME
-        }
-    );
+    res.render('index', INFO);
+});
+
+app.get('/partials/home.html', function(req, res){
+    res.render('partials/home', INFO);
+});
+
+app.get('/partials/about.html', function(req, res){
+    res.render('partials/about', INFO);
 });
 
 // JSON API below
 app.get('/jsapi-v1/info', function(req, res){
-    res.json({
-        appVersion : APP_VERSION,
-        appName    : APP_NAME
-    });
+    res.json(INFO);
 });
 
 app.get('/jsapi-v1/insertPost', function(req, res){
@@ -104,7 +104,7 @@ app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
 });
 
 
-app.listen(port);
-console.log('Listening on port ' + port);
+app.listen(PORT);
+console.log('Listening on port ' + PORT);
 
 })();
