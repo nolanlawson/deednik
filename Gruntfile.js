@@ -27,10 +27,24 @@ module.exports = function(grunt) {
           separator: ';'
         },
         dist: {
-          src: ['client/*.js'],
-          dest: 'build/<%= pkg.name %>.js'
+          src: ['client/application.js'],
+          dest: 'build/js/application-concat.js'
         }
       },
+      
+    // copy the js lib files over to build/
+    copy: {
+      main: {
+        files: [
+          {
+              expand: true, 
+              src: ['client/lib/**/*.js'], 
+              dest: 'build/js/lib', 
+              filter: 'isFile',
+              flatten: true}
+        ]
+      }
+    },
     
     // minify/uglify the client-side javascript
     uglify: {
@@ -39,23 +53,41 @@ module.exports = function(grunt) {
                 'built by Grunt on <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
-        src : 'build/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
+        src : 'build/js/application-concat.js',
+        dest: 'build/js/application-concat.min.js'
       }
     },
     
     // run client-side jasmine tests
     jasmine: {
           '1goodturn': {
-            src : 'build/**/*.js',
+            src : ['client/**/*.js', '!**/*/*.min.js'],
             options: {
               specs : 'spec/client/**/*.spec.js'
             }
           }
         },
+    sass: {                             
+          dist: {     
+            options: {
+              style: 'compressed'
+            },                      
+            files: {                        
+              'build/css/application.min.css' : 'styles/application.scss'
+            }
+          },
+          dev: {
+            options: {
+              style: 'expanded'
+            },
+            files: {                        
+              'build/css/application.css' : 'styles/application.scss'
+            }
+          }
+    },  
     watch : {
-        files : ['**/*.js'],
-        tasks : ['jshint', 'jasmine_node', 'concat', 'uglify', 'jasmine']
+        files : ['**/*.js', '**/*.scss'],
+        tasks : ['jshint', 'jasmine_node', 'concat', 'uglify', 'jasmine', 'sass']
     }
      
   });
@@ -66,9 +98,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jasmine-node');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task(s).
-  grunt.registerTask('test', ['jshint', 'jasmine_node', 'concat', 'uglify', 'jasmine']);
-  grunt.registerTask('default', ['test', 'watch']);
+  grunt.registerTask('build', ['copy', 'concat', 'uglify', 'sass']);
+  grunt.registerTask('test', ['jshint', 'jasmine_node', 'jasmine']);
+  grunt.registerTask('default', ['build', 'test', 'watch']);
 
 };

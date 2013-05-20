@@ -19,6 +19,8 @@
 		"grunt-contrib-uglify"   : "*",
 		"grunt-contrib-concat"   : "*",
 		"grunt-contrib-watch"    : "*",
+		"grunt-contrib-sass"     : "*",
+		"grunt-contrib-copy"     : "*",
 		"jasmine-node"           : "*",
 		"uglify-js"              : "*"
 	}
