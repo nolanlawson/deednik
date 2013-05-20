@@ -3,9 +3,15 @@ $bg              : #dfdfdf;
 $border          : #333;
 $logoBg          : #d64242;
 $textBorderColor : #f0f0f0;
+$bodyBg          : #fff;
+$warning         : #c09853;
+$error           : #b94a48;
 
 /* dimensions */
 $textBorderWidth : 2px;
+
+/* time */
+$fadeTime : 0.4s;
 
 /* mixins */
 
@@ -25,6 +31,7 @@ html {
 }
 
 body {
+    background: $bodyBg;
     max-width : 960px;
     margin    : 50px auto;
     padding   : 2em 20px;
@@ -75,4 +82,41 @@ h3 {
         @include main-logo(0.1em);
         font-size : 2em;
     }
+}
+
+.pull-center {
+    text-align : center;
+}
+
+/* fade in and out animation */
+
+.fadeIn-setup,.fadeOut-setup {
+  -webkit-transition: $fadeTime linear opacity;
+  -moz-transition: $fadeTime linear opacity;
+  -o-transition: $fadeTime linear opacity;
+  transition: $fadeTime linear opacity;
+}
+.fadeIn-setup{
+  opacity:0;
+}
+.fadeOut-setup{
+  opacity:1;
+}
+.fadeIn-setup.fadeIn-start {
+  opacity: 1;
+}
+.fadeOut-setup.fadeOut-start{
+    opacity:0;
+}
+
+.postControls {
+    background-color: $bodyBg;
+}
+
+span.muted.warning {
+    color : $warning;
+}
+
+span.muted.error {
+    color : $error;
 }

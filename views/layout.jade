@@ -6,6 +6,8 @@ html
     link(href='css/application.css',rel="stylesheet")
     link(rel='shortcut icon',type='image/x-icon',href='images/favicon.ico')
     link(href='http://fonts.googleapis.com/css?family=Chela+One',rel='stylesheet',type='text/css')
+    //- ensure ng-cloaked elements aren't shown while the app is loading, @see ng-cloak in Angular API
+    style [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],     .ng-cloak, .x-ng-cloak {display: none;}
   body(ng-app="one-good-turn")
     block content
     footer
@@ -15,12 +17,15 @@ html
             Created by [Nolan Lawson](http://nolanlawson.com).
             Version #{appVersion}.
     //- fetch from CDN, or local if not available
-    script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js")
+    script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js")
     script
-      window.angular || document.write('<script src="js/lib/angular-1.0.6.min.js">\x3C/script>')
+      window.angular || document.write('<script src="js/lib/angular-1.1.4.min.js">\x3C/script>')
     script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
     script
       window.jQuery || document.write('<script src="js/lib/jquery-1.8.3.min.js">\x3C/script>')
+    script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js")
+    script
+      window._ || document.write('<script src="js/lib/underscore-1.4.4.min.js">\x3C/script>')
     script(src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js")
     script
       window.jQuery.fn.modal || document.write('<script src="js/lib/bootstrap-2.3.1.min.js">\x3C/script>')
