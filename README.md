@@ -29,6 +29,15 @@ npm install
 grunt test
 ```
 
+Build for production
+--------------------
+
+```
+grunt build
+```
+
+will write images, javascript, and css to the ```build/``` directory.
+
 Deploy it yourself
 -----------------
 
