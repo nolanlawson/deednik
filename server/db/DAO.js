@@ -70,13 +70,15 @@
             }));
         }
         
-        function queryViewAndPromise(viewName, viewParams) {
+        function queryViewAndPromise(viewName, viewParams, returnMultiple) {
             var deferred = Q.defer();
             db.view(viewName, viewName, _.extend({include_docs : true },viewParams), function(err, body) {
                 if (err) {
                     deferred.reject(new Error(err));
-                } else if (!(body && body.rows && body.rows[0] && body.rows[0].doc)) {
+                } else if (!(body && body.rows && (returnMultiple || (body.rows[0] && body.rows[0].doc)))) {
                     deferred.reject(new Error("unacceptable body received: " + JSON.stringify(body)));
+                } else if (returnMultiple) {
+                    deferred.resolve(body.rows.map(function(element){return element.doc;}));
                 } else {
                     deferred.resolve(body.rows[0].doc);
                 }
@@ -175,6 +177,14 @@
         self.findVoteByUserIdAndPostId = function(userId, postId) {
             return queryViewAndPromise('by_user_id_and_post_id', {key : [userId, postId]});
         };
+    
+         /*
+          * returns a promise for a list of posts
+          */
+        self.findPostsByTimestampSince = function(timestamp, limit) {
+            var params = {startkey : timestamp, reverse : true, limit : limit};
+            return queryViewAndPromise('by_timestamp', params, true);
+        };        
     }
 
     module.exports = DAO;

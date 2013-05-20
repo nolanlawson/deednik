@@ -5,9 +5,10 @@
 
 var _ = require('underscore');
 
-function Post(content) {
+function Post(content, timestamp) {
     this.type = "post";
     this.content = content;
+    this.timestamp = (timestamp || new Date().getTime());
 }
 
 function toHash(obj) {

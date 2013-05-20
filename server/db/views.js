@@ -41,6 +41,13 @@
                 emit([doc.userId, doc.postId], null);
             }
         }
+    }, {
+        name : 'by_timestamp',
+        map : function(doc) {
+            if (doc.type === 'post' && doc.timestamp) {
+                emit(doc.timestamp, null);
+            }
+        }    
     }];
     
 })();
