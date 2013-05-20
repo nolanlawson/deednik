@@ -9,6 +9,7 @@ var
         // constants
         APP_NAME        = 'One Good Turn',
         APP_VERSION     = '1.0',
+        MAX_POST_SIZE   = 1024,
         port = 3000,
         
         // imports
@@ -22,7 +23,8 @@ var
         path        = require('path'),
         
         // in-app dependencies
-        DAO         = require('./server/db/DAO.js')
+        DAO         = require('./server/db/DAO.js'),
+        Post        = require('./server/model/Post.js')
         ;
         
 
@@ -46,6 +48,61 @@ app.get('/', function(req, res){
         }
     );
 });
+
+// JSON API below
+app.get('/jsapi-v1/info', function(req, res){
+    res.json({
+        appVersion : APP_VERSION,
+        appName    : APP_NAME
+    });
+});
+
+app.get('/jsapi-v1/insertPost', function(req, res){
+    console.log('/jsapi-v1/insertPost from ' + req.connection.remoteAddress);
+    
+    if(!req.query.postContent){
+        res.json({error : 'no postContent'});
+        return;
+    } else if (req.query.postContent.length > MAX_POST_SIZE) {
+        res.json({error : 'postContent too long'});
+        return;
+    }
+    
+    var content = req.query.postContent;
+    
+    var post = new Post(content);
+    
+    dao.save(post).
+    then(function(){
+        res.json({success : true});
+    }, function(err){
+        res.json({error : err});
+    }).done();
+    
+
+});
+
+app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
+    
+    var timestamp = req.query.timestamp && parseInt(req.query.timestamp, 10);
+    
+    console.log('timestamp is ' + timestamp);
+    
+    if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+        res.json({error : 'no timestamp'});
+        return;
+    }
+    
+    var limit = req.query.limit || 10;
+    
+    dao.findPostsByTimestampSince(timestamp, limit).
+    then(function(rows){
+        res.json({success : true, rows : rows});
+    }, function(err){
+        res.json({error : err});
+    }).done();
+});
+
 
 app.listen(port);
 console.log('Listening on port ' + port);

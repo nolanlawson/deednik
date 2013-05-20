@@ -86,7 +86,7 @@ module.exports = function(grunt) {
           }
     },  
     watch : {
-        files : ['server.js', 'server/**/*.js', 'client/**/*.js', 'styles/**/*.scss'],
+        files : ['spec/**/*.js', 'server.js', 'server/**/*.js', 'client/**/*.js', 'styles/**/*.scss'],
         tasks : ['jshint', 'jasmine_node', 'concat', 'uglify', 'jasmine', 'sass']
     }
      

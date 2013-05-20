@@ -205,9 +205,9 @@ describe("DAO test suite", function() {
  
     var self = this;
  
-    var post1 = new Post('blah blah blah', 1300000000);
-    var post2 = new Post('blah blah blah', 1400000000);
-    var post3 = new Post('blah blah blah', 1500000000);
+    var post1 = new Post('past', 1300000000);
+    var post2 = new Post('present', 1400000000);
+    var post3 = new Post('future', 1500000000);
 
     runs(function() {
         dao.save(post1);
@@ -238,7 +238,14 @@ describe("DAO test suite", function() {
             expect(results.map(function(element){
                 return element.valueOf().length;
             })).toEqual([3, 3, 3, 2, 2, 1, 1, 0, 0]);
+            
+            // make sure they're in descending order
+            expect(results[0].map(function(element){
+                return element.content;
+            })).toEqual(['future', 'present', 'past']);
+            
             checked = true;
+            
         }, function(err){
             self.fail(new Error('error in findPostsByTimestampSince: ' + err));
         }).done();

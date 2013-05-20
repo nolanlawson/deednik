@@ -116,20 +116,28 @@
             });
         };
 
-        /* save an object, hibernate style: save the object and then set the generated id and rev*/
+        /* 
+         * Save an object, hibernate style: save the object and then set the generated id and rev.
+         * Returns a promise of the object.
+        */
         self.save = function(object) {
+
+            var deferred = Q.defer();
 
             Q.nfcall(db.insert, object).
             then(function(body) {
                 if (body && body[0] && body[0].ok) {
                     object._id = body[0].id;
                     object._rev = body[0].rev;
+                    deferred.resolve(object);
                 } else {
-                    console.log('improper body object: ' + JSON.stringify(body));
+                    deferred.reject(new Error('improper body object: ' + JSON.stringify(body)));
                 }
             }, function(err) {
-                console.log('save error: ' + err);
+                deferred.reject(new Error('save error: ' + err));
             }).done();
+            
+            return deferred.promise;
         };
 
         /*
@@ -182,7 +190,7 @@
           * returns a promise for a list of posts
           */
         self.findPostsByTimestampSince = function(timestamp, limit) {
-            var params = {startkey : timestamp, reverse : true, limit : (limit || 10)};
+            var params = {endkey : timestamp, descending : true, limit : (limit || 10)};
             return queryViewAndPromise('by_timestamp', params, true);
         };        
     }
