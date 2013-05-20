@@ -51,7 +51,15 @@ module.exports = function(grunt) {
               src: ['client/lib/**/*.js'], 
               dest: 'build/js/lib', 
               filter: 'isFile',
-              flatten: true}
+              flatten: true
+          },
+          {
+              expand: true, 
+              src: ['images/*'], 
+              dest: 'build/images', 
+              filter: 'isFile',
+              flatten: true
+          }          
         ]
       }
     },
