@@ -14,4 +14,5 @@ block content
                 li(ng-click="$parent.selectedTabId = tab.id",ng-repeat="tab in tabs",ng-class="{active: tab.id == $parent.selectedTabId}")
                   a(href='#',ng-href='{{tab.getHref()}}',ng-bind='tab.title')
     
-      .main-view(ng-view)
+      #main-view-container
+        #main-view(ng-view)

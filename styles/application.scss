@@ -31,17 +31,27 @@ html {
 }
 
 body {
-    background: $bodyBg;
-    max-width : 960px;
-    margin    : 50px auto;
-    padding   : 2em 20px;
-    border-radius : 3px;
-    border: 1px solid $border;
-    font-size : 1.1em;
+    background: $bg;
+}
+
+footer {
+    margin-left: 10px;
 }
 
 #main-container {
-    max-width : 940px;
+    padding-top : 50px;
+}
+
+#main-view-container {
+    background: $bodyBg;
+    border-radius : 3px;
+    border: 1px solid $border;
+    font-size : 1.1em;
+    padding: 25px;
+}
+
+#main-view {
+    
 }
 
 h1 {
@@ -65,11 +75,11 @@ h3 {
 }
 
 .section-content {
-    margin: 0 4em;
-    text-size: 1.3em;
-    
+    font-size  : 1.2em;
+    line-height: 1.2em;
     p {
-        padding-bottom: 1.5em;
+        
+        padding-bottom: 1em;
     }
 }
 

@@ -2,9 +2,10 @@ header
   h1(id='main-title')
     span #{appName}
   h3 Stories of humans helping humans
+  hr
   .container
     .row
-      .span4
+      .span3.offset1
         form
           fieldset.control-group(ng-class="{'warning' : showLengthWarning(), 'error' : showLengthError()}")
             legend What good deed did you do today?
@@ -14,5 +15,5 @@ header
                 span.muted(ng-bind="getRemainingCharacters()",ng-class="{'warning' : showLengthWarning(), 'error' : showLengthError()}")
               .pull-right
                 button.btn.btn-large.btn-primary(href='#',ng-click="submit()",ng-disabled="showLengthError()",ng-class="{'disabled' : showLengthError()}") Tell the world 
-      .span8
+      .span7.offset1
         span world
