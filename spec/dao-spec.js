@@ -118,21 +118,35 @@ describe("DAO test suite", function() {
     
   });
   
-  it("deletes users from the database", function() {
+  it("deletes users, votes, and posts from the database", function() {
       var self = this;
       
       var user = new User('fooId');
+      var post = new Post('blah blah blah');
+      var vote;
       
       runs(function() {
           dao.save(user);
+          dao.save(post);
       });
 
       waitsFor(function(){
-          return user._id;
-      }, "user._id never added", 10000);
+          return user._id && post._id;
+      }, "user._id or post._id never added", 10000);
+      
+      runs(function(){
+          vote = new Vote(true, user._id, post._id);
+          dao.save(vote);
+      });
+
+      waitsFor(function(){
+          return vote._id;
+      }, "vote._id never added", 10000);
       
       runs(function(){
           dao.remove(user);
+          dao.remove(post);
+          dao.remove(vote);
       });
       
       waitsFor(function(){
@@ -141,6 +155,9 @@ describe("DAO test suite", function() {
       
       runs(function(){
           expect(user.deleted).toBe(true);
+          expect(post.deleted).toBe(true);
+          expect(vote.deleted).toBe(true);
+          
           dao.findUserByUserGuid(user.userGuid).then(function(){
               self.fail(new Error('user not deleted'));
           }, function(err){
@@ -151,9 +168,30 @@ describe("DAO test suite", function() {
                 self.fail(new Error('user not deleted'));
             }, function(err){
                 expect(err).not.toBe(null);
-            });
+          });
+          
+          dao.findById(post._id).then(function(){
+                  self.fail(new Error('post not deleted'));
+              }, function(err){
+                  expect(err).not.toBe(null);
+          });
+          
+          dao.findById(vote._id).then(function(){
+                    self.fail(new Error('vote not deleted'));
+                }, function(err){
+                    expect(err).not.toBe(null);
+          });
+          
+          dao.findVoteByUserIdAndPostId(user._id, post._id).then(function(){
+                    self.fail(new Error('vote not deleted'));
+                }, function(err){
+                    expect(err).not.toBe(null);
+          });
+          
       });
   });
+  
+  
 });
 
 })();
