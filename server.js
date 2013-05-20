@@ -21,7 +21,7 @@ var
         _           = require('underscore'),
         
         // in-app dependencies
-        DAO         = require('./server/DAO.js')
+        DAO         = require('./server/db/DAO.js')
         ;
         
 
@@ -32,7 +32,7 @@ app.use("/styles", express['static'](__dirname + '/styles'));
 app.use("/images", express['static'](__dirname + '/images'));
 app.use("/js", express['static'](__dirname + '/js'));
 
-var dao = DAO.DAO({production : true});
+var dao = new DAO({production : true});
 
 dao.init();
 

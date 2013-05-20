@@ -3,7 +3,7 @@
 
 "use strict";
 
-var DAO  = require('../server/DAO.js'),
+var DAO  = require('../server/db/DAO.js'),
     User = require('../server/model/User.js'),
     Post = require('../server/model/Post.js'),
     Vote = require('../server/model/Vote.js')
@@ -14,7 +14,7 @@ var dao;
 beforeEach(function(){
     // create the database and check that it's initialized
     runs(function(){
-        dao = DAO.DAO({production : false});
+        dao = new DAO({production : false});
         expect(dao.initialized).toBe(false);
         dao.init();
     });
@@ -119,6 +119,12 @@ describe("DAO test suite", function() {
     
     waitsFor(function(){return checked === 4;}, "never checked", 10000);
     
+  });
+  
+  it("deletes users, posts, and votes from the database", function() {
+      
+      
+      
   });
 });
 
