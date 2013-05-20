@@ -1,7 +1,7 @@
 /* colors */
 $bg              : #dfdfdf;
 $border          : #333;
-$crimson         : #d64242;
+$logoBg          : #d64242;
 $textBorderColor : #f0f0f0;
 
 /* dimensions */
@@ -11,7 +11,7 @@ $textBorderWidth : 2px;
 
 @mixin main-logo($radius) {
     font-family: 'Chela One', cursive;
-    background : $crimson;
+    background : $logoBg;
     padding : 0.1em 0.5em;
     border-radius: $radius;
 }
