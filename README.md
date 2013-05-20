@@ -25,7 +25,8 @@ Unit tests
 Make sure CouchDB is running at localhost:5984, then run:
 
 ```
-jasmine-node spec/
+npm install
+grunt test
 ```
 
 Deploy it yourself

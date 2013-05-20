@@ -13,10 +13,10 @@ var
     
     Q    = require('q'),
     
-    DAO  = require('../server/db/DAO.js'),
-    User = require('../server/model/User.js'),
-    Post = require('../server/model/Post.js'),
-    Vote = require('../server/model/Vote.js')
+    DAO  = require('../../server/db/DAO.js'),
+    User = require('../../server/model/User.js'),
+    Post = require('../../server/model/Post.js'),
+    Vote = require('../../server/model/Vote.js')
     ;  
 
 var dao;
