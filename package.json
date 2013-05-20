@@ -22,6 +22,7 @@
 		"grunt-contrib-sass"     : "*",
 		"grunt-contrib-copy"     : "*",
 		"jasmine-node"           : "*",
-		"uglify-js"              : "*"
+		"uglify-js"              : "*",
+		"socket.io"              : "*"
 	}
 }

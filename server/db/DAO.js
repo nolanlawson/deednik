@@ -192,7 +192,14 @@
         self.findPostsByTimestampSince = function(timestamp, limit) {
             var params = {endkey : timestamp, descending : true, limit : (limit || 10)};
             return queryViewAndPromise('by_timestamp', params, true);
-        };        
+        };  
+        
+        /* returns the last 5 timestamps
+         *
+         */
+        self.findLastPosts = function(limit) {
+            return queryViewAndPromise('by_timestamp', {descending : true, limit : (typeof limit === 'undefined' ? 10 : limit)}, true);
+        };
     }
 
     module.exports = DAO;

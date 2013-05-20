@@ -1,4 +1,4 @@
-/*global require __dirname console*/
+/*global require __dirname console */
 (function(){
 
 "use strict";
@@ -16,12 +16,13 @@ var
         // imports
         express     = require('express'), 
         app         = express(),
+        server      = require('http').createServer(app),
         //http        = require('http'),
         //NodeCache   = require("node-cache"),
         //querystring = require('querystring'),
         //Q           = require('q'),
-        //_           = require('underscore'),
         path        = require('path'),
+        io          = require('socket.io').listen(server),
         
         // in-app dependencies
         DAO         = require('./server/db/DAO.js'),
@@ -38,6 +39,23 @@ app.locals.pretty = true;
 var dao = new DAO({production : true});
 
 dao.init();
+
+var sockets = [];
+
+function updateSockets(post) {
+    // inform the sockets that we have a new post
+    // TODO: batch these
+    sockets.forEach(function(socket){
+        try {
+            // TODO: deal with dead sockets eating up memory
+            if (socket.volatile) {
+                socket.volatile.emit('new:post', post);
+            }
+        } catch (err) {
+            console.log('error with socket: ' + err);
+        }
+    });
+}
 
 // redirect to the main app path
 app.get('/', function(req, res){
@@ -73,7 +91,8 @@ app.get('/jsapi-v1/insertPost', function(req, res){
     var post = new Post(content);
     
     dao.save(post).
-    then(function(){
+    then(function(savedPost){
+        updateSockets(savedPost);
         res.json({success : true});
     }, function(err){
         res.json({error : err});
@@ -103,8 +122,30 @@ app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
     }).done();
 });
 
+io.sockets.on('connection', function(socket){
+    console.log('connection made');
+    
+    console.log('socket connect, there were ' + sockets.length + ' sockets...');
+    sockets.push(socket);
+    console.log('now there are ' + sockets.length + ' sockets');
+    
+    socket.on('request:refresh', function(){
+        // given the user the last few posts from couchdb
+        dao.findLastPosts(10).
+        then(function(posts){
+            socket.emit('get:refresh', posts);
+        }).done();
+    });
+    
+    socket.on('disconnect', function() {
+        console.log('socket disconnect, there were ' + sockets.length + ' sockets...');
+        sockets.splice(sockets.indexOf(socket), 1);
+        console.log('now there are ' + sockets.length + ' sockets');
+    });
+});
 
-app.listen(PORT);
+
+server.listen(PORT);
 console.log('Listening on port ' + PORT);
 
 })();

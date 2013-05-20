@@ -7,6 +7,16 @@ module.exports = function(grunt) {
     
     //
     jshint: {
+        options : {
+            browser : true,
+            globals : {
+                angular : true,
+                io      : true,
+                console : true,
+                _       : true,
+                moment  : true
+            }
+        },
         server : {
             src     : ['Gruntfile.js', 'server.js', 'server/**/*.js']
         },
@@ -27,7 +37,7 @@ module.exports = function(grunt) {
           separator: '\n;\n'
         },
         dist: {
-          src: ['client/application.js', 'client/controllers/*.js'],
+          src: ['client/application.js', 'client/services/*.js', 'client/controllers/*.js'],
           dest: 'build/js/application-concat.js'
         }
       },

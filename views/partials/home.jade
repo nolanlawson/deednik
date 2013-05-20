@@ -15,5 +15,9 @@ header
                 span.muted(ng-bind="getRemainingCharacters()",ng-class="{'warning' : showLengthWarning(), 'error' : showLengthError()}")
               .pull-right
                 button.btn.btn-large.btn-primary(href='#',ng-click="submit()",ng-disabled="showLengthError()",ng-class="{'disabled' : showLengthError()}") Tell the world 
-      .span7.offset1
-        span world
+      .span7.offset1(ng-controller="StreamController")
+        h4 Latest turns
+        div#postsToShow(ng-repeat="post in postsToShow",ng-animate="{ enter : 'fadeIn'}")
+          .well
+            span {{post.content}}
+            small.pull-right.muted {{getFriendlyDate(post)}}
