@@ -3,13 +3,13 @@
  * @see http://www.html5rocks.com/en/tutorials/frameworks/angular-websockets/
  */
 /*jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, strict:true, browser:true */ 
-/*global angular io*/
+/*global angular io APP_INFO*/
 (function() {
 
 "use strict";
 
 angular.module('one-good-turn').factory('socket', function ($rootScope) {
-  var socket = io.connect();
+  var socket = io.connect(APP_INFO.production && 'http://1goodturn.us');
   return {
     on: function (eventName, callback) {
       socket.on(eventName, function () {  

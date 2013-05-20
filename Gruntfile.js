@@ -14,7 +14,8 @@ module.exports = function(grunt) {
                 io      : true,
                 console : true,
                 _       : true,
-                moment  : true
+                moment  : true,
+                APP_INFO: true
             }
         },
         server : {

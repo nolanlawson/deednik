@@ -9,9 +9,10 @@ var
         // constants
         APP_NAME        = 'One Good Turn',
         APP_VERSION     = '1.0',
+        PRODUCTION      = false,
         MAX_POST_SIZE   = 1024,
         PORT            = 3000,
-        INFO            = {appName : APP_NAME, appVersion : APP_VERSION}, 
+        APP_INFO        = {appName : APP_NAME, appVersion : APP_VERSION, production : PRODUCTION}, 
         
         // imports
         express     = require('express'), 
@@ -59,20 +60,20 @@ function updateSockets(post) {
 
 // redirect to the main app path
 app.get('/', function(req, res){
-    res.render('index', INFO);
+    res.render('index', APP_INFO);
 });
 
 app.get('/partials/home.html', function(req, res){
-    res.render('partials/home', INFO);
+    res.render('partials/home', APP_INFO);
 });
 
 app.get('/partials/about.html', function(req, res){
-    res.render('partials/about', INFO);
+    res.render('partials/about', APP_INFO);
 });
 
 // JSON API below
 app.get('/jsapi-v1/info', function(req, res){
-    res.json(INFO);
+    res.json(APP_INFO);
 });
 
 app.get('/jsapi-v1/insertPost', function(req, res){
