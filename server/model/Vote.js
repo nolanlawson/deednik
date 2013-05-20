@@ -1,7 +1,9 @@
-/*global module*/
+/*global module require*/
 (function(){
 
 "use strict";
+
+var _ = require('underscore');
 
 function Vote(positive, userId, postId) {
     this.type = "vote";
@@ -9,6 +11,14 @@ function Vote(positive, userId, postId) {
     this.userId = userId;
     this.postId = postId;
 }
+
+function toHash(obj) {
+    return _.pick(obj, 'type', 'positive', 'userId', 'postId', '_id', '_rev');
+}
+
+Vote.prototype.equals = function(other) {
+    return _.isEqual(toHash(this), toHash(other));
+};
 
 module.exports = Vote;
 

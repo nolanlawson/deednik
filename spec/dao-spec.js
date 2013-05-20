@@ -103,11 +103,11 @@ describe("DAO test suite", function() {
             dao.findVoteByUserIdAndPostId(user._id, post._id),
             dao.findById(vote._id)
         ]).spread(function(fetchedUser1, fetchedUser2, fetchedPost, fetchedVote1, fetchedVote2) {
-            expect(fetchedUser1._id).toEqual(user._id);
-            expect(fetchedUser2._id).toEqual(user._id);
-            expect(fetchedPost._id).toEqual(post._id);
-            expect(fetchedVote1._id).toEqual(vote._id);
-            expect(fetchedVote2._id).toEqual(vote._id);
+            expect(user.equals(fetchedUser1)).toBe(true);
+            expect(user.equals(fetchedUser2)).toBe(true);
+            expect(post.equals(fetchedPost)).toBe(true);
+            expect(vote.equals(fetchedVote1)).toBe(true);
+            expect(vote.equals(fetchedVote2)).toBe(true);            
             checked = true;
         }).then(console.log, function(err){
             console.log('got error in chain: ' + err);
