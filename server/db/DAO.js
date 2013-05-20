@@ -103,7 +103,7 @@
                 then(useDB).
                 then(createViews).
                 then(setInitialized, console.log);
-            });
+            }).done();
         };
 
         /* delete (drop) the database */
@@ -129,7 +129,7 @@
                 }
             }, function(err) {
                 console.log('save error: ' + err);
-            });
+            }).done();
         };
 
         /*

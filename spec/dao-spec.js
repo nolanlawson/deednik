@@ -121,7 +121,7 @@ describe("DAO test suite", function() {
             checked = true;
         }).then(console.log, function(err){
             console.log('got error in chain: ' + err);
-        });
+        }).done();
     });
     
     waitsFor(function(){return checked;}, "never checked", 10000);
@@ -172,31 +172,31 @@ describe("DAO test suite", function() {
               self.fail(new Error('user not deleted'));
           }, function(err){
               expect(err).not.toBe(null);
-          });
+          }).done();
           
           dao.findById(user._id).then(function(){
                 self.fail(new Error('user not deleted'));
             }, function(err){
                 expect(err).not.toBe(null);
-          });
+          }).done();
           
           dao.findById(post._id).then(function(){
                   self.fail(new Error('post not deleted'));
               }, function(err){
                   expect(err).not.toBe(null);
-          });
+          }).done();
           
           dao.findById(vote._id).then(function(){
                     self.fail(new Error('vote not deleted'));
                 }, function(err){
                     expect(err).not.toBe(null);
-          });
+          }).done();
           
           dao.findVoteByUserIdAndPostId(user._id, post._id).then(function(){
                     self.fail(new Error('vote not deleted'));
                 }, function(err){
                     expect(err).not.toBe(null);
-          });
+          }).done();
           
       });
   });
@@ -235,8 +235,7 @@ describe("DAO test suite", function() {
             expect(results.map(function(element){return element.valueOf().length;})).toBe([3, 3, 3, 2, 2, 1, 1, 0]);
         }, function(err){
             self.fail(new Error(err));
-        });
-        
+        }).done();
     });
     
   });
