@@ -8,7 +8,7 @@ var
 
         // constants
         APP_NAME        = 'One Good Turn',
-        APP_VERSION     = '0.0.1',
+        APP_VERSION     = '0.0.2',
         PRODUCTION      = true,
         MAX_POST_SIZE   = 1024,
         PORT            = 3000,
@@ -126,17 +126,15 @@ app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
 io.sockets.on('connection', function(socket){
     console.log('connection made');
     
-    console.log('socket connect, there were ' + sockets.length + ' sockets...');
-    sockets.push(socket);
-    console.log('now there are ' + sockets.length + ' sockets');
+    // given the user the last few posts from couchdb
+    dao.findLastPosts(10).
+    then(function(posts){
+        socket.emit('init', posts);
+        console.log('socket connect, there were ' + sockets.length + ' sockets...');
+        sockets.push(socket);
+        console.log('now there are ' + sockets.length + ' sockets');
+    }).done();        
     
-    socket.on('request:refresh', function(){
-        // given the user the last few posts from couchdb
-        dao.findLastPosts(10).
-        then(function(posts){
-            socket.emit('get:refresh', posts);
-        }).done();
-    });
     
     socket.on('disconnect', function() {
         console.log('socket disconnect, there were ' + sockets.length + ' sockets...');

@@ -9,7 +9,7 @@ header
         form
           fieldset.control-group(ng-class="{'warning' : showLengthWarning(), 'error' : showLengthError()}")
             legend What good deed did you do today?
-            textarea.span4(ng-class="{'disabled' : disabled}",required,ng-model="postContent",rows="5",placeholder="{{randomPlaceholder}}")
+            textarea.span4(ng-class="{'disabled' : disabled}",required,ng-model="$parent.$parent.postContent",rows="5",placeholder="{{randomPlaceholder}}")
             div(ng-cloak,style="display:none;",ng-show="initialClick && postContent.length > 0",ng-animate="{ show: 'fadeIn', hide: 'fadeOut'}")
               .pull-left
                 span.muted(ng-bind="getRemainingCharacters()",ng-class="{'warning' : showLengthWarning(), 'error' : showLengthError()}")
@@ -17,7 +17,7 @@ header
                 button.btn.btn-large.btn-primary(href='#',ng-click="submit()",ng-disabled="disabled || showLengthError()",ng-class="{'disabled' : disabled || showLengthError()}") Tell the world 
       .span7.offset1(ng-controller="StreamController")
         h4 Latest turns
-        div#postsToShow(ng-repeat="post in postsToShow",ng-animate="{ enter : 'fadeIn'}")
+        div#postsToShow(ng-repeat="post in $parent.$parent.postsToShow",ng-animate="{ enter : 'fadeIn'}")
           .well
             span {{post.content}}
             small.pull-right.muted {{getFriendlyDate(post)}}

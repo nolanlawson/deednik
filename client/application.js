@@ -11,11 +11,9 @@ angular.module('one-good-turn', []).
 config(['$routeProvider', function($routeProvider){
     $routeProvider.
     when('/home', {
-        controller  : 'MainController',
         templateUrl : 'partials/home.html'
     }).
     when('/about', {
-        controller  : 'MainController',
         templateUrl : 'partials/about.html'
     }).    
     otherwise({

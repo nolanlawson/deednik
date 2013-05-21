@@ -7,11 +7,18 @@
 
     "use strict";
 
-    angular.module('one-good-turn').controller('MainController', ['$scope', '$http', function($scope, $http) {
+    angular.module('one-good-turn').controller('MainController', ['$scope', '$rootScope', '$http', 
+            function($scope, $rootScope, $http) {
 
-        $scope.MAX_CONTENT_LENGTH = 1024;
-
-        $scope.postContent = "";
+        $rootScope.MAX_CONTENT_LENGTH = 1024;
+        
+        if (!$rootScope.postsToShow) {
+            $rootScope.postsToShow = [];
+        }
+        
+        if (!$rootScope.postContent) {
+            $rootScope.postContent = '';
+        }
 
         // some nice flavor text for the textarea
         var placeholders = [
@@ -59,7 +66,7 @@
                 }).
                 success(function() {
                     console.log('posted successfully');
-                    $scope.postContent = '';
+                    $rootScope.postContent = '';
                     $scope.disabled = false;
                 }).
                 error(function(data, status, headers, config) {
