@@ -11,7 +11,7 @@
         nano  = require('nano')('http://localhost:5984'),
         Q     = require('q'),
         _     = require('underscore'),
-        views = require('./views.js'),
+        views = require('./Views.js'),
 
         // constants
         PRODUCTION_DB_NAME = 'onegoodturn'

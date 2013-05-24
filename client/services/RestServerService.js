@@ -7,7 +7,7 @@
 
     "use strict";
 
-    angular.module('one-good-turn').factory('server', ['$http', function ($http) {
+    angular.module('one-good-turn').factory('restServer', ['$http', function ($http) {
 
         return {
             findLastPosts : function(n) {

@@ -9,7 +9,7 @@ var
         // constants
         APP_NAME        = 'One Good Turn',
         APP_VERSION     = '0.0.5',
-        PRODUCTION      = true,
+        PRODUCTION      = (process.env.NODE_ENV !== 'development'),
         MAX_POST_SIZE   = 1024,
         PORT            = 3000,
         APP_INFO        = {appName : APP_NAME, appVersion : APP_VERSION, production : PRODUCTION}, 
@@ -23,40 +23,27 @@ var
         //querystring = require('querystring'),
         //Q           = require('q'),
         path        = require('path'),
-        io          = require('socket.io').listen(server),
         
         // in-app dependencies
-        DAO         = require('./server/db/DAO.js'),
-        Post        = require('./server/model/Post.js')
+        DAO          = require('./server/db/DAO.js'),
+        SocketServer = require('./server/sockets/SocketServer.js'),
+        Post         = require('./server/model/Post.js')
         ;
-        
+
 app.set('view engine', 'jade');
 app.set('views', path.join(__dirname, 'views'));
 app.use("/css", express['static'](path.join(__dirname, 'build/css')));
 app.use("/images", express['static'](path.join(__dirname, 'images')));
 app.use("/js", express['static'](path.join(__dirname, 'build/js')));
-app.locals.pretty = true;
+app.locals.pretty = !PRODUCTION;
+
+
 
 var dao = new DAO({production : true});
-
 dao.init();
 
-var sockets = [];
-
-function updateSockets(post) {
-    // inform the sockets that we have a new post
-    // TODO: batch these
-    sockets.forEach(function(socket){
-        try {
-            // TODO: deal with dead sockets eating up memory
-            if (socket.volatile) {
-                socket.volatile.emit('new:post', post);
-            }
-        } catch (err) {
-            console.log('error with socket: ' + err);
-        }
-    });
-}
+var socketServer = new SocketServer();
+socketServer.init(server);
 
 // redirect to the main app path
 app.get('/', function(req, res){
@@ -93,7 +80,8 @@ app.get('/jsapi-v1/insertPost', function(req, res){
     
     dao.save(post).
     then(function(savedPost){
-        updateSockets(savedPost);
+        // notify any listening clients on the socket
+        socketServer.updateSockets(savedPost);
         res.json({success : true});
     }, function(err){
         res.json({error : err});
@@ -160,25 +148,8 @@ app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
     }).done();
 });
 
-io.sockets.on('connection', function(socket){
-    console.log('connection made');
-    
-
-    socket.emit('init', {success : true});
-    console.log('socket connect, there were ' + sockets.length + ' sockets...');
-    sockets.push(socket);
-    console.log('now there are ' + sockets.length + ' sockets');
-
-    
-    socket.on('disconnect', function() {
-        console.log('socket disconnect, there were ' + sockets.length + ' sockets...');
-        sockets.splice(sockets.indexOf(socket), 1);
-        console.log('now there are ' + sockets.length + ' sockets');
-    });
-});
-
 
 server.listen(PORT);
-console.log('Listening on port ' + PORT);
+console.log('Listening on port ' + PORT + ' in ' + (PRODUCTION ? 'production' : 'development') + ' mode.');
 
 })();

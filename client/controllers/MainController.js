@@ -7,7 +7,7 @@
 
     "use strict";
 
-    angular.module('one-good-turn').controller('MainController', ['$scope', '$rootScope', 'server',
+    angular.module('one-good-turn').controller('MainController', ['$scope', '$rootScope', 'restServer',
             function($scope, $rootScope, server) {
 
         $rootScope.MAX_CONTENT_LENGTH = 1024;

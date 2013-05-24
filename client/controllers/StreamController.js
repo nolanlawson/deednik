@@ -8,7 +8,7 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('StreamController', ['$rootScope', '$scope', 'socket', 'server',
+angular.module('one-good-turn').controller('StreamController', ['$rootScope', '$scope', 'socket', 'restServer',
             function($rootScope, $scope, socket, server){
     
     // do this whenever the controller is created to request new data

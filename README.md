@@ -33,20 +33,36 @@ Build for production
 --------------------
 
 ```
+npm install
 grunt build
 ```
 
-will write images, javascript, and css to the ```build/``` directory.
-
-Deploy it yourself
------------------
-
-Simply run:
+will write images, javascript, and css to the ```build/``` directory.  Then just run
 
 ```
-npm install
 node server.js
 ```
+
+to start the server on localhost:3000.
+
+Developer workflow
+-----------------
+
+In one shell, run
+
+```
+grunt
+```
+
+to watch for changes and automatically re-test and re-build.
+
+In another shell, run
+
+```
+NODE_ENV=development supervisor server.js
+```
+
+to watch for changes and redeploy on localhost:3000.
 
 [1]: http://www.apache.org/licenses/LICENSE-2.0.html
 [6]: http://www.hon.ch
