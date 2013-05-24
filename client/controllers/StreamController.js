@@ -8,8 +8,8 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('StreamController', ['$scope', 'socket', 'server',
-            function($scope, socket, server){
+angular.module('one-good-turn').controller('StreamController', ['$rootScope', '$scope', 'socket', 'server',
+            function($rootScope, $scope, socket, server){
     
     // do this whenever the controller is created to request new data
     socket.on('init', function(){
@@ -34,12 +34,12 @@ angular.module('one-good-turn').controller('StreamController', ['$scope', 'socke
                     $scope.recentPosts.push(post);
                 });
                 $scope.loadingMore = false;
-                $scope.loadingMoreExhausted = response.exhausted;
+                $rootScope.loadingMoreExhausted = response.exhausted;
         }).
         error(function(){
                 window.console.log('error fetching posts...');
                 $scope.loadingMore = false;
-                $scope.loadingMoreExhausted = false;
+                $rootScope.loadingMoreExhausted = false;
         });
     };
 
