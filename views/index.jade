@@ -8,7 +8,7 @@ block content
               span.icon-bar
               span.icon-bar
               span.icon-bar
-            a.brand.main-logo(href='#/home',ng-click='selectedTabId="home"') #{appName}
+            a.brand.main-logo(href='#/home',ng-click='selectedTabId="home"') #{APP_INFO.description}
             .ng-cloak.nav-collapse.collapse
               ul.nav
                 li(ng-click="$parent.selectedTabId = tab.id",ng-repeat="tab in tabs",ng-class="{active: tab.id == $parent.selectedTabId}")

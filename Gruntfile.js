@@ -19,10 +19,10 @@ module.exports = function(grunt) {
             }
         },
         server : {
-            src     : ['Gruntfile.js', 'server.js', 'server/**/*.js']
+            src     : ['Gruntfile.js', 'src/server/server.js', 'server/**/*.js']
         },
         client : {
-            src     : ['client/**/*.js', '!**/*.min.js']
+            src     : ['src/client/**/*.js', '!**/*.min.js']
         }
       },
     
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
           separator: '\n;\n'
         },
         dist: {
-          src: ['client/application.js', 'client/services/*.js', 'client/controllers/*.js'],
+          src: ['src/client/application.js', 'src/client/services/*.js', 'src/client/controllers/*.js'],
           dest: 'build/js/application-concat.js'
         }
       },
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
         files: [
           {
               expand: true, 
-              src: ['client/lib/**/*.js'], 
+              src: ['src/client/lib/**/*.js'],
               dest: 'build/js/lib', 
               filter: 'isFile',
               flatten: true
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
     // minify/uglify the client-side javascript
     uglify: {
       options: {
-        banner: '/*! Application <%= pkg.name %>, created by Nolan Lawson, ' + 
+        banner: '/*! Application <%= pkg.name %> v<%= pkg.version %>, created by Nolan Lawson, ' +
                 'built by Grunt on <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
@@ -105,7 +105,7 @@ module.exports = function(grunt) {
           }
     },  
     watch : {
-        files : ['spec/**/*.js', 'server.js', 'server/**/*.js', 'client/**/*.js', 'styles/**/*.scss'],
+        files : ['spec/**/*.js', 'src/**/*.js', '!**/*.min.js', 'styles/**/*.scss'],
         tasks : ['jshint', 'jasmine_node', 'concat', 'uglify', 'jasmine', 'sass']
     }
      

@@ -6,36 +6,31 @@
 
 var
 
-        // constants
-        APP_NAME        = 'One Good Turn',
-        APP_VERSION     = '0.0.5',
-        PRODUCTION      = (process.env.NODE_ENV !== 'development'),
-        MAX_POST_SIZE   = 1024,
-        PORT            = 3000,
-        APP_INFO        = {appName : APP_NAME, appVersion : APP_VERSION, production : PRODUCTION}, 
-        
         // imports
         express     = require('express'), 
         app         = express(),
         server      = require('http').createServer(app),
-        //http        = require('http'),
-        //NodeCache   = require("node-cache"),
-        //querystring = require('querystring'),
-        //Q           = require('q'),
         path        = require('path'),
+        _           = require('underscore'),
+
+        // constants
+
+        PRODUCTION      = (process.env.NODE_ENV !== 'development'),
+        APP_INFO        = _.extend({production : PRODUCTION}, require('./../../package.json')),
+        MAX_POST_SIZE   = 1024,
+        PORT            = 3000,
         
         // in-app dependencies
-        DAO          = require('./server/db/DAO.js'),
-        SocketServer = require('./server/sockets/SocketServer.js'),
-        Post         = require('./server/model/Post.js')
+        DAO          = require('./db/DAO.js'),
+        SocketServer = require('./sockets/SocketServer.js'),
+        ViewHandler  = require('./views/ViewHandler.js'),
+        Post         = require('./model/Post.js')
         ;
 
-app.set('view engine', 'jade');
-app.set('views', path.join(__dirname, 'views'));
-app.use("/css", express['static'](path.join(__dirname, 'build/css')));
-app.use("/images", express['static'](path.join(__dirname, 'images')));
-app.use("/js", express['static'](path.join(__dirname, 'build/js')));
-app.locals.pretty = !PRODUCTION;
+
+app.use("/css", express['static'](path.join(__dirname, '../../build/css')));
+app.use("/images", express['static'](path.join(__dirname, '../../images')));
+app.use("/js", express['static'](path.join(__dirname, '../../build/js')));
 
 
 
@@ -45,23 +40,8 @@ dao.init();
 var socketServer = new SocketServer();
 socketServer.init(server);
 
-// redirect to the main app path
-app.get('/', function(req, res){
-    res.render('index', APP_INFO);
-});
-
-app.get('/partials/home.html', function(req, res){
-    res.render('partials/home', APP_INFO);
-});
-
-app.get('/partials/about.html', function(req, res){
-    res.render('partials/about', APP_INFO);
-});
-
-// JSON API below
-app.get('/jsapi-v1/info', function(req, res){
-    res.json(APP_INFO);
-});
+var viewHandler = new ViewHandler();
+viewHandler.init(app, APP_INFO);
 
 app.get('/jsapi-v1/insertPost', function(req, res){
     console.log('/jsapi-v1/insertPost from ' + req.connection.remoteAddress);
