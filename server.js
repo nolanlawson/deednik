@@ -102,7 +102,7 @@ app.get('/jsapi-v1/insertPost', function(req, res){
 
 });
 
-app.get('/jsapi-v1/findLastNPosts', function(req, res){
+app.get('/jsapi-v1/findLastPosts', function(req, res){
     var n = req.query.n && parseInt(req.query.n, 10);
 
     console.log('getting last ' + n + ' timestamps');
@@ -114,6 +114,28 @@ app.get('/jsapi-v1/findLastNPosts', function(req, res){
     function(err){
         res.json({error : err});
     });
+
+});
+
+app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
+
+    var timestamp = req.query.timestamp && parseInt(req.query.timestamp, 10);
+
+    console.log('timestamp is ' + timestamp);
+
+    if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+        res.json({error : 'no timestamp'});
+        return;
+    }
+
+    var limit = req.query.limit || 10;
+
+    dao.findPostsByTimestampBefore(timestamp, limit).
+        then(function(rows){
+            res.json({success : true, rows : rows});
+        }, function(err){
+            res.json({error : err});
+        }).done();
 
 });
 

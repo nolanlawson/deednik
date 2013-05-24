@@ -7,21 +7,20 @@
 
     "use strict";
 
-    angular.module('one-good-turn').controller('MainController', ['$scope', '$rootScope', '$http',
-            function($scope, $rootScope, $http) {
+    angular.module('one-good-turn').controller('MainController', ['$scope', '$rootScope', 'server',
+            function($scope, $rootScope, server) {
 
         $rootScope.MAX_CONTENT_LENGTH = 1024;
         
         if (!$rootScope.recentPosts) {
-            $http({
-                method : 'GET',
-                url    : '/jsapi-v1/findLastNPosts'
-            }).success(function(response){
+            server.findLastPosts().
+            success(function(response){
                     $rootScope.recentPosts.splice(0, $rootScope.recentPosts.length);
                     _.forEach(response.rows, function(post){
                         $rootScope.recentPosts.push(post);
                     });
-            }).error(function(data, status, headers, config) {
+            }).
+            error(function(data, status, headers, config) {
                     // todo: handle a fail more gracefully
                     window.console.log('failed to get, got args: ' + JSON.stringify([data, status, headers, config]));
             });
@@ -71,11 +70,8 @@
             if ($scope.postContent.length > 0 && $scope.postContent.length < $scope.MAX_CONTENT_LENGTH) {
                 $scope.disabled = true;
                 // TODO: post instead of get?
-                var url = '/jsapi-v1/insertPost?postContent=' + encodeURIComponent($scope.postContent);
-                $http({
-                    method: 'GET',
-                    url: url
-                }).
+
+                server.insertPost($scope.postContent).
                 success(function() {
                     window.console.log('posted successfully');
                     $rootScope.postContent = '';

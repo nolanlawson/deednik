@@ -239,11 +239,23 @@ describe("DAO test suite", function() {
             dao.findLastPosts(2),
             dao.findLastPosts(1),
             dao.findLastPosts(0),
-            dao.findLastPosts()
+            dao.findLastPosts(),
+            dao.findPostsByTimestampBefore(1500000001, 10),
+            dao.findPostsByTimestampBefore(1500000000, 10),
+            dao.findPostsByTimestampBefore(1499999999, 10),
+            dao.findPostsByTimestampBefore(1400000001, 10),
+            dao.findPostsByTimestampBefore(1400000000, 10),
+            dao.findPostsByTimestampBefore(1399999999, 10),
+            dao.findPostsByTimestampBefore(1300000001, 10),
+            dao.findPostsByTimestampBefore(1300000000, 10),
+            dao.findPostsByTimestampBefore(1299999999, 10)
         ]).then(function(results) {
             expect(results.map(function(element){
                 return element.valueOf().length;
-            })).toEqual([3, 3, 3, 2, 2, 1, 1, 0, 0, 3, 3, 2, 1, 0, 3]);
+            })).toEqual([
+                    3, 3, 3, 2, 2, 1, 1, 0, 0,
+                    3, 3, 2, 1, 0, 3,
+                    3, 2, 2, 2, 1, 1, 1, 0, 0]);
             
             // make sure they're in descending order
             expect(results[0].map(function(element){

@@ -24,3 +24,7 @@ header
           .well
             span {{post.content}}
             small.pull-right.muted {{getFriendlyDate(post)}}
+        .latestTurns
+          button.btn.btn-primary.span3.pull-center(ng-class="{disabled : loadingMore}",ng-click="loadMore()")
+            img(ng-show="loadingMore",src="images/ajax-loader-btn.gif")
+            span(ng-hide="loadingMore") Load more...

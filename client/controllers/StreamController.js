@@ -8,7 +8,8 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('StreamController', ['$scope', 'socket', function($scope, socket){
+angular.module('one-good-turn').controller('StreamController', ['$scope', 'socket', 'server',
+            function($scope, socket, server){
     
     // do this whenever the controller is created to request new data
     socket.on('init', function(){
@@ -24,7 +25,22 @@ angular.module('one-good-turn').controller('StreamController', ['$scope', 'socke
     $scope.getFriendlyDate = function(post) {
         return moment(post.timestamp).format('MMMM Do YYYY, h:mm a');
     };
-    
+
+    $scope.loadMore = function() {
+        $scope.loadingMore = true;
+        server.findPostsByTimestampBefore(_.last($scope.recentPosts).timestamp).
+        success(function(response){
+                _.forEach(response.rows, function(post) {
+                    $scope.recentPosts.push(post);
+                });
+                $scope.loadingMore = false;
+        }).
+        error(function(){
+                window.console.log('error fetching posts...');
+                $scope.loadingMore = false;
+        });
+    };
+
     
 }]);
 

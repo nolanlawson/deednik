@@ -191,8 +191,16 @@
         self.findPostsByTimestampSince = function(timestamp, limit) {
             var params = {endkey : timestamp, descending : true, limit : (limit || 10)};
             return queryViewAndPromise('by_timestamp', params, true);
-        };  
-        
+        };
+
+        /*
+         * returns a promise for a list of posts
+         */
+        self.findPostsByTimestampBefore = function(timestamp, limit) {
+            var params = {startkey : timestamp - 1, descending : true, limit : (limit || 10)};
+            return queryViewAndPromise('by_timestamp', params, true);
+        };
+
         /* returns the last 5 timestamps
          *
          */
