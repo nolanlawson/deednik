@@ -40,7 +40,7 @@ grunt build
 will write images, javascript, and css to the ```build/``` directory.  Then just run
 
 ```
-node server.js
+node src/server/server.js
 ```
 
 to start the server on localhost:3000.
@@ -59,7 +59,7 @@ to watch for changes and automatically re-test and re-build.
 In another shell, run
 
 ```
-NODE_ENV=development supervisor server.js
+NODE_ENV=development supervisor src/server/server.js
 ```
 
 to watch for changes and redeploy on localhost:3000.
