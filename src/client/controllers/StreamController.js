@@ -8,8 +8,9 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('StreamController', ['$rootScope', '$scope', 'socket', 'restServer',
-            function($rootScope, $scope, socket, server){
+angular.module('one-good-turn').controller('StreamController',
+    ['$rootScope', '$scope', 'socket', 'restServer', 'recentPosts',
+            function($rootScope, $scope, socket, restServer, recentPosts){
     
     // do this whenever the controller is created to request new data
     socket.on('init', function(){
@@ -17,9 +18,7 @@ angular.module('one-good-turn').controller('StreamController', ['$rootScope', '$
     });
     
     socket.on('new:post', function(post){
-        if (!_.findWhere($scope.recentPosts,{_id : post._id})) {
-            $scope.recentPosts.splice(0, 0, post);
-        }
+        recentPosts.addToFront(post);
     });
     
     $scope.getFriendlyDate = function(post) {
@@ -28,18 +27,18 @@ angular.module('one-good-turn').controller('StreamController', ['$rootScope', '$
 
     $scope.loadMore = function() {
         $scope.loadingMore = true;
-        server.findPostsByTimestampBefore(_.last($scope.recentPosts).timestamp).
+        restServer.findPostsByTimestampBefore(_.last(recentPosts.list).timestamp).
         success(function(response){
                 _.forEach(response.rows, function(post) {
-                    $scope.recentPosts.push(post);
+                    recentPosts.addToBack(post);
                 });
                 $scope.loadingMore = false;
-                $rootScope.loadingMoreExhausted = response.exhausted;
+                recentPosts.exhausted = response.exhausted;
         }).
         error(function(){
                 window.console.log('error fetching posts...');
                 $scope.loadingMore = false;
-                $rootScope.loadingMoreExhausted = false;
+                recentPosts.exhausted = false;
         });
     };
 
