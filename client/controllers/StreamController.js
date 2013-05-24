@@ -11,17 +11,13 @@
 angular.module('one-good-turn').controller('StreamController', ['$scope', 'socket', function($scope, socket){
     
     // do this whenever the controller is created to request new data
-    socket.on('init', function(posts){
+    socket.on('init', function(){
         console.log('socket init!');
-        $scope.postsToShow.splice(0, $scope.postsToShow.length);
-        _.forEach(posts, function(post){
-            $scope.postsToShow.push(post);
-        });
     });
     
     socket.on('new:post', function(post){
-        if (!_.findWhere($scope.postsToShow,{_id : post._id})) {
-            $scope.postsToShow.splice(0, 0, post);
+        if (!_.findWhere($scope.recentPosts,{_id : post._id})) {
+            $scope.recentPosts.splice(0, 0, post);
         }
     });
     

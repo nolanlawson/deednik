@@ -1,19 +1,31 @@
 /*
  * Main AngularJS Controller
  */
-/*global angular _ console*/
+/*global angular _ */
 
 (function() {
 
     "use strict";
 
-    angular.module('one-good-turn').controller('MainController', ['$scope', '$rootScope', '$http', 
+    angular.module('one-good-turn').controller('MainController', ['$scope', '$rootScope', '$http',
             function($scope, $rootScope, $http) {
 
         $rootScope.MAX_CONTENT_LENGTH = 1024;
         
-        if (!$rootScope.postsToShow) {
-            $rootScope.postsToShow = [];
+        if (!$rootScope.recentPosts) {
+            $http({
+                method : 'GET',
+                url    : '/jsapi-v1/findLastNPosts'
+            }).success(function(response){
+                    $rootScope.recentPosts.splice(0, $rootScope.recentPosts.length);
+                    _.forEach(response.rows, function(post){
+                        $rootScope.recentPosts.push(post);
+                    });
+            }).error(function(data, status, headers, config) {
+                    // todo: handle a fail more gracefully
+                    window.console.log('failed to get, got args: ' + JSON.stringify([data, status, headers, config]));
+            });
+            $rootScope.recentPosts = [];
         }
         
         if (!$rootScope.postContent) {
@@ -65,13 +77,13 @@
                     url: url
                 }).
                 success(function() {
-                    console.log('posted successfully');
+                    window.console.log('posted successfully');
                     $rootScope.postContent = '';
                     $scope.disabled = false;
                 }).
                 error(function(data, status, headers, config) {
                     // todo: handle a fail more gracefully
-                    console.log('failed to post, got args: ' + JSON.stringify([data, status, headers, config]));
+                    window.console.log('failed to post, got args: ' + JSON.stringify([data, status, headers, config]));
                     $scope.disabled = false;
                 });
             }

@@ -102,6 +102,21 @@ app.get('/jsapi-v1/insertPost', function(req, res){
 
 });
 
+app.get('/jsapi-v1/findLastNPosts', function(req, res){
+    var n = req.query.n && parseInt(req.query.n, 10);
+
+    console.log('getting last ' + n + ' timestamps');
+
+    dao.findLastPosts(n).
+    then(function(rows){
+        res.json({success : true, rows : rows});
+    },
+    function(err){
+        res.json({error : err});
+    });
+
+});
+
 app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
     
     var timestamp = req.query.timestamp && parseInt(req.query.timestamp, 10);
@@ -126,15 +141,12 @@ app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
 io.sockets.on('connection', function(socket){
     console.log('connection made');
     
-    // given the user the last few posts from couchdb
-    dao.findLastPosts(10).
-    then(function(posts){
-        socket.emit('init', posts);
-        console.log('socket connect, there were ' + sockets.length + ' sockets...');
-        sockets.push(socket);
-        console.log('now there are ' + sockets.length + ' sockets');
-    }).done();        
-    
+
+    socket.emit('init', {success : true});
+    console.log('socket connect, there were ' + sockets.length + ' sockets...');
+    sockets.push(socket);
+    console.log('now there are ' + sockets.length + ' sockets');
+
     
     socket.on('disconnect', function() {
         console.log('socket disconnect, there were ' + sockets.length + ' sockets...');

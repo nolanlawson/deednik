@@ -17,10 +17,10 @@ header
                 button.btn.btn-large.btn-primary(href='#',ng-click="submit()",ng-disabled="disabled || showLengthError()",ng-class="{'disabled' : disabled || showLengthError()}") Tell the world 
       .span7.offset1(ng-controller="StreamController")
         h4 Latest turns
-        .latestTurns(ng-show=" $parent.$parent.postsToShow.length == 0")
+        .latestTurns(ng-show=" $parent.$parent.recentPosts.length == 0")
           .well.pull-center
             img(src="images/ajax-loader.gif")
-        .latestTurns(ng-repeat="post in $parent.$parent.postsToShow",ng-animate="{ enter : 'fadeIn'}")
+        .latestTurns(ng-repeat="post in $parent.$parent.recentPosts",ng-animate="{ enter : 'fadeIn'}")
           .well
             span {{post.content}}
             small.pull-right.muted {{getFriendlyDate(post)}}
