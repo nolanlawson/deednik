@@ -21,14 +21,13 @@
 
         var self = this;
 
-        dbName = options.production ? 
+        var dbName = options.production ?
                 PRODUCTION_DB_NAME : 
                 'unit_test_' + new Date().getTime() + "_" + Math.floor((Math.random() * 1000000));
 
         //
         // private variables
-        // 
-        var dbName = dbName;
+        //
         var db = null;
 
         //
