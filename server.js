@@ -132,7 +132,7 @@ app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
 
     dao.findPostsByTimestampBefore(timestamp, limit).
         then(function(rows){
-            res.json({success : true, rows : rows});
+            res.json({success : true, rows : rows, exhausted : (rows.length < limit)});
         }, function(err){
             res.json({error : err});
         }).done();
@@ -154,7 +154,7 @@ app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
     
     dao.findPostsByTimestampSince(timestamp, limit).
     then(function(rows){
-        res.json({success : true, rows : rows});
+        res.json({success : true, rows : rows, exhausted : (rows.length < limit)});
     }, function(err){
         res.json({error : err});
     }).done();

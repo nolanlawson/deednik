@@ -34,10 +34,12 @@ angular.module('one-good-turn').controller('StreamController', ['$scope', 'socke
                     $scope.recentPosts.push(post);
                 });
                 $scope.loadingMore = false;
+                $scope.loadingMoreExhausted = response.exhausted;
         }).
         error(function(){
                 window.console.log('error fetching posts...');
                 $scope.loadingMore = false;
+                $scope.loadingMoreExhausted = false;
         });
     };
 
