@@ -6,17 +6,19 @@
 var
 
         // imports
-        express     = require('express'), 
-        app         = express(),
-        server      = require('http').createServer(app),
-        path        = require('path'),
-        _           = require('underscore'),
+        express          = require('express'),
+        expressValidator = require('express-validator'),
+        app              = express(),
+        server           = require('http').createServer(app),
+        path             = require('path'),
+        _                = require('underscore'),
 
         // constants
 
         PRODUCTION      = (process.env.NODE_ENV !== 'development'),
         APP_INFO        = _.extend({production : PRODUCTION}, require('./../../package.json')),
         MAX_POST_SIZE   = 1024,
+        MIN_POST_SIZE   = 1,// TODO: reconsider this
         PORT            = 3000,
         
         // in-app dependencies
@@ -30,7 +32,8 @@ var
 app.use("/css", express['static'](path.join(__dirname, '../../build/css')));
 app.use("/images", express['static'](path.join(__dirname, '../../images')));
 app.use("/js", express['static'](path.join(__dirname, '../../build/js')));
-
+app.use(express.bodyParser());
+app.use(expressValidator);
 
 
 var dao = new DAO({production : true});
@@ -44,16 +47,15 @@ viewHandler.init(app, APP_INFO);
 
 app.get('/jsapi-v1/insertPost', function(req, res){
     console.log('/jsapi-v1/insertPost from ' + req.connection.remoteAddress);
-    
-    if(!req.query.postContent){
-        res.json({error : 'no postContent'});
-        return;
-    } else if (req.query.postContent.length > MAX_POST_SIZE) {
-        res.json({error : 'postContent too long'});
+
+    req.assert('postContent', 'Invalid postContent').notEmpty().len(MIN_POST_SIZE, MAX_POST_SIZE);
+
+    if (req.validationErrors()) {
+        res.json({error : req.validationErrors(true)});
         return;
     }
-    
-    var content = req.query.postContent;
+
+    var content = req.query.postContent.toString();
     
     var post = new Post(content);
     
@@ -70,7 +72,17 @@ app.get('/jsapi-v1/insertPost', function(req, res){
 });
 
 app.get('/jsapi-v1/findLastPosts', function(req, res){
-    var n = req.query.n && parseInt(req.query.n, 10);
+    console.log('/jsapi-v1/findLastPosts');
+
+    req.assert('n', 'Invalid n - should be int').notEmpty().isInt();
+    req.sanitize('n').toInt();
+
+    if (req.validationErrors()) {
+        res.json({error : req.validationErrors(true)});
+        return;
+    }
+
+    var n = req.query.n;
 
     console.log('getting last ' + n + ' timestamps');
 
@@ -86,16 +98,18 @@ app.get('/jsapi-v1/findLastPosts', function(req, res){
 
 app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
 
-    var timestamp = req.query.timestamp && parseInt(req.query.timestamp, 10);
+    req.assert('timestamp', 'Invalid timestamp - should be int').notEmpty().isInt();
+    req.sanitize('timestamp').toInt();
+    req.assert('limit', 'Invalid limit - should be int').notEmpty().isInt();
+    req.sanitize('limit').toInt();
 
-    console.log('timestamp is ' + timestamp);
-
-    if (typeof timestamp !== 'number' || isNaN(timestamp)) {
-        res.json({error : 'no timestamp'});
+    if (req.validationErrors()) {
+        res.json({error : req.validationErrors(true)});
         return;
     }
 
-    var limit = req.query.limit || 10;
+    var timestamp = req.query.timestamp;
+    var limit = req.query.limit;
 
     dao.findPostsByTimestampBefore(timestamp, limit).
         then(function(rows){
@@ -107,17 +121,19 @@ app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
 });
 
 app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
-    
-    var timestamp = req.query.timestamp && parseInt(req.query.timestamp, 10);
-    
-    console.log('timestamp is ' + timestamp);
-    
-    if (typeof timestamp !== 'number' || isNaN(timestamp)) {
-        res.json({error : 'no timestamp'});
+
+    req.assert('timestamp', 'Invalid timestamp - should be int').notEmpty().isInt();
+    req.sanitize('timestamp').toInt();
+    req.assert('limit', 'Invalid limit - should be int').notEmpty().isInt();
+    req.sanitize('limit').toInt();
+
+    if (req.validationErrors()) {
+        res.json({error : req.validationErrors(true)});
         return;
     }
-    
-    var limit = req.query.limit || 10;
+
+    var timestamp = req.query.timestamp;
+    var limit = req.query.limit;
     
     dao.findPostsByTimestampSince(timestamp, limit).
     then(function(rows){
