@@ -1,4 +1,4 @@
-/*global require __dirname console */
+/* Main server definition for 1 Good Turn. */
 (function(){
 
 "use strict";

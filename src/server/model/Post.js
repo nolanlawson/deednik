@@ -1,4 +1,5 @@
-/*global module require*/
+/* Simple POJO for a post by a user */
+
 (function(){
 
 "use strict";

@@ -1,8 +1,6 @@
 /*
  * Service for interacting with the server.  Makes $http less of a pain
  */
-/*jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, strict:true, browser:true */
-/*global angular*/
 (function() {
 
     "use strict";

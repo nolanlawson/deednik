@@ -1,0 +1,23 @@
+{
+    "browser": true,
+    "bitwise": true,
+    "curly": true,
+    "eqeqeq": true,
+    "forin": true,
+    "noarg": true,
+    "noempty": true,
+    "nonew": true,
+    "undef": true,
+    "strict": true,
+    "node": true,
+    "globals": {
+        "angular": true,
+        "io": true,
+        "console": true,
+        "_": true,
+        "moment": true,
+        "emit" : true,
+        "sum" : true,
+        "APP_INFO": true
+    }
+}

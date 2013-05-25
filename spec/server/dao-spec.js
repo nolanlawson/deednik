@@ -4,7 +4,6 @@
  * Here's a script to delete any uncleaned-up databases:
  * for thing in `curl http://localhost:5984/_all_dbs | egrep -o 'unit_test_[^"]+'`; do curl -X DELETE -d '{}' "http://localhost:5984/$thing"; done
  */
-/*global require describe it expect waitsFor runs beforeEach afterEach jasmine console*/
 (function(){
 
 "use strict";

@@ -1,4 +1,4 @@
-/*global module require*/
+/*Simple POJO for a vote from a user on a post */
 (function(){
 
 "use strict";

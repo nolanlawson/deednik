@@ -1,7 +1,6 @@
 /*
  * Logic for displaying Jade views.
  */
-/*global require module*/
 (function() {
 
     "use strict";

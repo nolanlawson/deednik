@@ -2,7 +2,6 @@
  * Initial views to be added to CouchDB.
  * TODO: handle migrations
 */
-/*global module emit sum*/
 (function() {
 
     "use strict";

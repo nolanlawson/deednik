@@ -1,7 +1,6 @@
 /*
  * Logic for dealing with the CouchDB database 
 */
-/*global require console module*/
 (function() {
 
     "use strict";

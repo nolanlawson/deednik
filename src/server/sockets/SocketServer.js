@@ -1,7 +1,6 @@
 /*
  * Logic for dealing with the Socket.IO stuff.
  */
-/*global require module*/
 (function() {
 
     "use strict";

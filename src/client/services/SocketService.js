@@ -2,8 +2,6 @@
  * Super cool web socket service!  Thanks HTML5rocks docs!
  * @see http://www.html5rocks.com/en/tutorials/frameworks/angular-websockets/
  */
-/*jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, strict:true, browser:true */ 
-/*global angular io*/
 (function() {
 
 "use strict";

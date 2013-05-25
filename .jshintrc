@@ -1,0 +1,29 @@
+{
+    "browser": true,
+    "bitwise": true,
+    "curly": true,
+    "eqeqeq": true,
+    "forin": true,
+    "noarg": true,
+    "noempty": true,
+    "nonew": true,
+    "undef": true,
+    "strict": true,
+    "node": true,
+    "globals": {
+        "describe" : true,
+        "it" : true,
+        "expect" : true,
+        "waitsFor" : true,
+        "runs" : true,
+        "beforeEach" : true,
+        "afterEach" : true,
+        "jasmine" : true,
+        "angular": true,
+        "io": true,
+        "console": true,
+        "_": true,
+        "moment": true,
+        "APP_INFO": true
+    }
+}

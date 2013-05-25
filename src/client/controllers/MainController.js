@@ -1,7 +1,6 @@
 /*
  * Main AngularJS Controller
  */
-/*global angular _ */
 
 (function() {
 

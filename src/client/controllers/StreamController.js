@@ -1,8 +1,6 @@
 /*
  * Super cool socket controller for the stream of user data coming from the client.
  */
-/*jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, strict:true, browser:true */
-/*global angular console moment _*/
 
 (function(){
 

@@ -1,4 +1,5 @@
-/*global module*/
+"use strict";
+
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -7,22 +8,23 @@ module.exports = function(grunt) {
     
     //
     jshint: {
-        options : {
-            browser : true,
-            globals : {
-                angular : true,
-                io      : true,
-                console : true,
-                _       : true,
-                moment  : true,
-                APP_INFO: true
+        server : {
+            src     : ['src/server/**/*.js'],
+            options : {
+                jshintrc : 'src/server/.jshintrc'
             }
         },
-        server : {
-            src     : ['Gruntfile.js', 'src/server/server.js', 'server/**/*.js']
-        },
         client : {
-            src     : ['src/client/**/*.js', '!**/*.min.js']
+            src     : ['src/client/**/*.js', '!**/*.min.js'],
+            options : {
+                jshintrc : 'src/client/.jshintrc'
+            }
+        },
+        miscellaneous : {
+            src : ['spec/**/*.js', 'Gruntfile.js'],
+            options : {
+                jshintrc : ".jshintrc"
+            }
         }
       },
     

@@ -1,8 +1,6 @@
 /*
  * Service representing the list of recent posts shown in the main view.
  */
-/*jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, strict:true, browser:true */
-/*global angular _*/
 (function() {
 
     "use strict";
