@@ -5,17 +5,19 @@ header
   hr
   .container
     .row
-      .span3.offset1
+      .span3.offset1(ng-controller="NewPostController")
         form
           fieldset.control-group(ng-class="{'warning' : showLengthWarning(), 'error' : showLengthError()}")
             legend What good deed did you do today?
-            textarea.span4(ng-class="{'disabled' : disabled}",required,ng-model="$parent.$parent.postContent",rows="5",placeholder="{{randomPlaceholder}}")
-            div(ng-cloak,style="display:none;",ng-show="initialClick && postContent.length > 0",ng-animate="{ show: 'fadeIn', hide: 'fadeOut'}")
+            textarea.span4(ng-class="{'disabled' : disabled}",required,ng-model="newPost.content",rows="5",
+            placeholder="{{randomPlaceholder}}")
+            div(ng-cloak,style="display:none;",ng-show="initialClick && newPost.getLength() > 0",
+            ng-animate="{ show: 'fadeIn', hide: 'fadeOut'}")
               .pull-left
                 span.muted(ng-bind="getRemainingCharacters()",ng-class="{'warning' : showLengthWarning(), 'error' : showLengthError()}")
               .pull-right
                 button.btn.btn-large.btn-primary(href='#',ng-click="submit()",ng-disabled="disabled || showLengthError()",ng-class="{'disabled' : disabled || showLengthError()}") Tell the world 
-      .span7.offset1(ng-controller="StreamController")
+      .span7.offset1(ng-controller="RecentPostsController")
         h4 Latest turns
         .latestTurns(ng-show="recentPosts.list.length == 0")
           .well.pull-center

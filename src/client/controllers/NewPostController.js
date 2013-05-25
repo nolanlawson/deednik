@@ -5,15 +5,14 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('MainController',
-    ['$scope', '$rootScope', 'restServer', 'constants', 'recentPosts',
-        function ($scope, $rootScope, restServer, constants, recentPosts) {
+angular.module('one-good-turn').controller('NewPostController',
+    ['$scope', '$rootScope', 'restServer', 'constants', 'recentPosts', 'newPost',
+        function ($scope, $rootScope, restServer, constants, recentPosts, newPost) {
 
 
     $scope.recentPosts = recentPosts;
-
     $scope.randomPlaceholder = (constants.PLACEHOLDERS[_.random(0, constants.PLACEHOLDERS.length - 1)]) + ", etc.";
-
+    $scope.newPost = newPost;
 
     // fixes problem of animation running on initial page load
     $scope.initialClick = false;
@@ -21,32 +20,28 @@ angular.module('one-good-turn').controller('MainController',
         $scope.initialClick = true;
     });
 
-    function getPostLength() {
-        return $rootScope.postContent ? $rootScope.postContent.length : 0;
-    }
-
     // callbacks
     $scope.showLengthWarning = function () {
-        return !$scope.showLengthError() && getPostLength() > constants.MAX_CONTENT_LENGTH - 10;
+        return !$scope.showLengthError() && newPost.getLength() > constants.MAX_CONTENT_LENGTH - 10;
     };
 
     $scope.showLengthError = function () {
-        return getPostLength() > constants.MAX_CONTENT_LENGTH;
+        return newPost.getLength() > constants.MAX_CONTENT_LENGTH;
     };
 
     $scope.getRemainingCharacters = function () {
-        return constants.MAX_CONTENT_LENGTH - getPostLength();
+        return constants.MAX_CONTENT_LENGTH - newPost.getLength();
     };
 
     $scope.submit = function () {
-        if (getPostLength() > 0 && !$scope.showLengthError()) {
+        if (newPost.getLength() > 0 && !$scope.showLengthError()) {
             $scope.disabled = true;
             // TODO: post instead of get?
 
-            restServer.insertPost($scope.postContent).
+            restServer.insertPost(newPost.content).
                 success(function () {
                     window.console.log('posted successfully');
-                    $rootScope.postContent = '';
+                    newPost.content = '';
                     $scope.disabled = false;
                 }).
                 error(function (data, status, headers, config) {

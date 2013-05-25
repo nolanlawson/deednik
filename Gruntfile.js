@@ -40,7 +40,10 @@ module.exports = function(grunt) {
           separator: '\n;\n'
         },
         dist: {
-          src: ['src/client/application.js', 'src/client/services/*.js', 'src/client/controllers/*.js'],
+          src: ['src/client/application.js',
+              'src/client/services/*.js',
+              'src/client/factories/*.js',
+              'src/client/controllers/*.js'],
           dest: 'build/js/application-concat.js'
         }
       },

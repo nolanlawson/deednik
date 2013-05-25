@@ -5,10 +5,12 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('StreamController',
+angular.module('one-good-turn').controller('RecentPostsController',
     ['$rootScope', '$scope', 'socket', 'restServer', 'recentPosts',
             function($rootScope, $scope, socket, restServer, recentPosts){
-    
+
+    $scope.recentPosts = recentPosts;
+
     // do this whenever the controller is created to request new data
     socket.on('init', function(){
         console.log('socket init!');
