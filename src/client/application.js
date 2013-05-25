@@ -15,7 +15,7 @@ constant('constants', {
             "Gave a ride to a cool hitchhiker dude",
             "Gave directions to a lost-looking foreign couple",
             "Grew a gnarly Movember 'stache to raise money for prostate cancer",
-            "Cleaned up after myself at a fast-food place",
+            "Cleaned up after myself at a restaurant, even though it's not \"my\" job",
             "Cooked up a mean taco soup for a soup kitchen",
             "Volunteered after school for my kid's PTA",
             "Gave a quarter to a dude who needed bus money"
