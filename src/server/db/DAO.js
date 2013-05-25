@@ -55,15 +55,46 @@ function DAO(options) {
         });
     }
 
-    function createViews() {
+    /*
+     * check each view one-by-one, creating it if it doesn't exist.
+     * This way, migrations are handled automagically!  Yay!
+     */
+    function createViewsIfNecessary() {
         return Q.allResolved(views.map(function(view) {
+
+            var deferred = Q.defer();
+
             var viewDef = {};
             viewDef[view.name] = _.pick(view,'map','reduce');
 
-            return Q.nfcall(db.insert, {
-                language: 'javascript',
-                views: viewDef
-            }, ('_design/' + view.name));
+            var designName = '_design/' + view.name;
+
+            function createView(){
+                console.log("design doc " + designName + " doesn't exit; need to create it");
+                Q.nfcall(db.insert, {
+                    language: 'javascript',
+                    views: viewDef
+                }, designName).
+                then(function(){
+                    console.log("created design doc " + designName);
+                    deferred.resolve(true);
+                },function(err){
+                    console.log('unhandled err: ' + err);
+                    deferred.resolve(true);
+                });
+            }
+
+            Q.nfcall(db.head, designName, function(body){
+                if (body) { // body here indicates an error for some reason
+                    createView();
+                } else {
+                    // nothing to do
+                    console.log("design doc " + designName + " already exists");
+                    deferred.resolve(true);
+                }
+            }, createView);
+
+            return deferred.promise;
         }));
     }
 
@@ -108,12 +139,13 @@ function DAO(options) {
         // create the couchdb database if it doesn't exist already
         Q.nfcall(nano.db.get, dbName).
         then(useDB).
+        then(createViewsIfNecessary).
         then(setInitialized, function(err) {
             console.log('db "' + dbName + '" needs to be created, got err: ' + err);
 
             Q.nfcall(nano.db.create, dbName).
             then(useDB).
-            then(createViews).
+            then(createViewsIfNecessary).
             then(setInitialized, console.log);
         }).done();
     };
