@@ -22,6 +22,7 @@
 		"grunt-contrib-watch"    : "*",
 		"grunt-contrib-sass"     : "*",
 		"grunt-contrib-copy"     : "*",
+        "grunt-contrib-clean"    : "*",
 		"jasmine-node"           : "*",
 		"uglify-js"              : "*",
 		"socket.io"              : "*"

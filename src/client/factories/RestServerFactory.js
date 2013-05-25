@@ -11,7 +11,8 @@ angular.module('one-good-turn').factory('restServer', ['$http', function ($http)
 
             return $http({
                 method : 'GET',
-                url    : '/jsapi-v1/findLastPosts?n=' + encodeURIComponent(n || 10)
+                url    : '/jsapi-v1/findLastPosts',
+                params   : {n : (n || 10)}
             });
         },
 

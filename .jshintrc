@@ -11,6 +11,8 @@
     "strict": true,
     "node": true,
     "globals": {
+        "scope": true,
+        "inject" : true,
         "describe" : true,
         "it" : true,
         "expect" : true,
