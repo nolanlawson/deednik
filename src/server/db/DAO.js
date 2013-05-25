@@ -67,17 +67,32 @@ function DAO(options) {
         }));
     }
 
-    function queryViewAndPromise(viewName, viewParams, returnMultiple) {
+    function queryViewAndPromise(viewName, viewParams, returnMultiple, noDoc, defaultValue) {
         var deferred = Q.defer();
-        db.view(viewName, viewName, _.extend({include_docs : true },viewParams), function(err, body) {
+        db.view(viewName, viewName, _.extend({include_docs : !noDoc },viewParams), function(err, body) {
             if (err) {
                 deferred.reject(new Error(err));
-            } else if (!(body && body.rows && (returnMultiple || (body.rows[0] && body.rows[0].doc)))) {
-                deferred.reject(new Error("unacceptable body received: " + JSON.stringify(body)));
+            } else if (!(body && body.rows && (returnMultiple || (body.rows[0] && (noDoc || body.rows[0].doc))))) {
+                if (defaultValue) {
+                    deferred.resolve(defaultValue);
+                } else {
+                    deferred.reject(new Error("unacceptable body received: " + JSON.stringify(body)));
+                }
             } else if (returnMultiple) {
-                deferred.resolve(body.rows.map(function(element){return element.doc;}));
+                if (noDoc) {
+                    // can't be sure there aren't some nulls in here, since this is
+                    // probably a reduce-type view, so make a map of keys to values
+                    var lookup = _.object(body.rows.map(function(element){return [element.key, element.value];}));
+                    deferred.resolve(viewParams.keys.map(function(key){
+                        return lookup[key] || defaultValue;
+                    }));
+                } else {
+                    deferred.resolve(body.rows.map(function(element){
+                        return element.doc;
+                    }));
+                }
             } else {
-                deferred.resolve(body.rows[0].doc);
+                deferred.resolve(noDoc ? body.rows[0].value : body.rows[0].doc);
             }
         });
 
@@ -177,10 +192,20 @@ function DAO(options) {
     };
 
     /*
-     * returns a promise for the object body
+     * returns a promise for the object body, or error if it doesn't exist
      */
     self.findVoteByUserIdAndPostId = function(userId, postId) {
         return queryViewAndPromise('by_user_id_and_post_id', {key : [userId, postId]});
+    };
+
+    /*
+     * returns a list of promises for the votes, or empty if there are none
+     */
+    self.findVotesByUserIdAndPostIds = function(userId, postIds) {
+        var keys = _.map(postIds, function(postId){
+            return [userId, postId];
+        });
+        return queryViewAndPromise('by_user_id_and_post_id', {keys : keys}, true);
     };
 
      /*
@@ -204,6 +229,27 @@ function DAO(options) {
      */
     self.findLastPosts = function(limit) {
         return queryViewAndPromise('by_timestamp', {descending : true, limit : (typeof limit === 'undefined' ? 10 : limit)}, true);
+    };
+
+    /*
+     * accepts either a single post id or a list of post ids
+     * returns either an array of PostDetail object promises or a single PostDetail object promise
+     * the details object looks like this: {posCount : 2, negCount : 0}
+     *
+     */
+    self.findPostDetails = function(postId) {
+
+        var defaultValue = {posCount : 0, negCount : 0};
+
+        if (postId instanceof Array) {
+            // check multiple ids
+            return queryViewAndPromise('post_details', {keys : postId, reduce : true, group : true},
+                true, true, defaultValue);
+        } else {
+            // check single id
+            return queryViewAndPromise('post_details', {key : postId, reduce : true, group : true},
+                false, true, defaultValue);
+        }
     };
 }
 

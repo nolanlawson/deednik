@@ -10,11 +10,13 @@
 var 
     
     Q    = require('q'),
+    _    = require('underscore'),
     
     DAO  = require('../../src/server/db/DAO.js'),
     User = require('../../src/server/model/User.js'),
     Post = require('../../src/server/model/Post.js'),
-    Vote = require('../../src/server/model/Vote.js')
+    Vote = require('../../src/server/model/Vote.js'),
+    Functions = require('../../src/server/util/Functions.js')
     ;  
 
 var dao;
@@ -270,6 +272,207 @@ describe("DAO test suite", function() {
     waitsFor(function(){return checked;});
     
   });
+
+    it("votes for posts and can show the number of votes and votes per user", function() {
+
+        var self = this;
+
+        var posts = [
+            new Post('past', 1300000000),
+            new Post('present', 1400000000),
+            new Post('future', 1500000000)
+        ];
+
+        var users = [
+            new User('foo'),
+            new User('bar'),
+            new User('baz')
+        ];
+
+        var savedAll = false;
+
+        runs(function() {
+            Q.all(users.concat(posts).map(Functions.save(dao))).then(
+                function(){
+                    console.log('posts are now: ' + JSON.stringify(posts));
+                    console.log('users are now: ' + JSON.stringify(users));
+                    savedAll = true;
+                },
+                Functions.failTest(self));
+        });
+
+        waitsFor(function(){
+            return savedAll;
+        }, "savedAll never true", 10000);
+
+        var checkedIds = false;
+
+        runs(function(){
+            console.log('checking ids for users: ' + JSON.stringify(users));
+            console.log('get ids: ' + JSON.stringify(_.every(users, Functions.getId())));
+            expect(_.every(users, Functions.getId())).toBe(true);
+            expect(_.every(posts, Functions.getId())).toBe(true);
+            checkedIds = true;
+        });
+
+        waitsFor(function(){
+            return checkedIds;
+        }, "checkedIds never true", 10000);
+
+
+        // no votes have been made yet, so make sure that everything comes
+        // back zero
+        var checkedNoVotes = false;
+
+        runs(function(){
+            Q.all([
+                dao.findPostDetails(posts[0]._id),
+                dao.findPostDetails(posts[1]._id),
+                dao.findPostDetails(posts[2]._id),
+                dao.findPostDetails(posts.map(Functions.getId())),
+                dao.findVotesByUserIdAndPostIds(users[0]._id, posts.map(Functions.getId()))
+            ]).spread(function(post0Res, post1Res, post2Res, allPostsRes, user1AllPostsRes){
+
+                    var defaultObject = {posCount : 0, negCount : 0};
+
+                    expect(post0Res).toEqual(defaultObject);
+                    expect(post1Res).toEqual(defaultObject);
+                    expect(post2Res).toEqual(defaultObject);
+                    expect(allPostsRes).toEqual([defaultObject, defaultObject, defaultObject]);
+                    expect(user1AllPostsRes).toEqual([]);
+
+                    // check that doing a single lookup of userid+postid gives us an error
+                    dao.findVoteByUserIdAndPostId(users[0]._id, posts[0]._id).then(
+                        function(){
+                            self.fail(new Error("don't expect this vote to exist"));
+                        }, function(err) {
+                            expect(err).not.toBeNull();
+                            checkedNoVotes = true;
+                    });
+
+
+            }, Functions.failTest(self));
+        });
+
+        waitsFor(function(){
+            return checkedNoVotes;
+        }, "checkedNoVotes never true", 10000);
+
+
+        var savedAllVotes = false;
+
+        runs(function(){
+            var votes = [
+                // 1 neg, 1 pos for post1
+                new Vote(true,  users[0]._id, posts[0]._id),
+                new Vote(false,  users[1]._id, posts[0]._id),
+
+                // 3 pos for post2
+                new Vote(true,  users[0]._id, posts[1]._id),
+                new Vote(true,  users[1]._id, posts[1]._id),
+                new Vote(true,  users[2]._id, posts[1]._id)
+                // nothing for post3
+            ];
+
+            Q.all(_.map(votes, Functions.save(dao))).then(function(){
+                savedAllVotes = true;
+            }, Functions.failTest(self));
+        });
+
+        waitsFor(function(){
+            return savedAllVotes;
+        }, "savedAllVotes never true", 10000);
+
+        //waitsFor(function(){return false;}, 'sleep', 300000);
+
+        var allDone1 = false;
+
+        runs(function(){
+
+            // make sure that the API does the same thing
+            // for multiple post ids and for a single post id
+            var fetchSingle = _.map(posts, function(post){
+                return dao.findPostDetails(post._id);
+            });
+
+            var fetchMultiple = dao.findPostDetails(posts.map(Functions.getId()));
+
+            var fetchStrategies = [fetchSingle, fetchMultiple].map(function(fetchStrategy){
+                var deferred = Q.defer();
+                Q.all(fetchStrategy).spread(
+                    function(post1, post2, post3){
+                        console.log('got posts: ' + JSON.stringify([post1, post2, post3]));
+                        expect(post1.posCount).toEqual(1);
+                        expect(post1.negCount).toEqual(1);
+
+                        expect(post2.posCount).toEqual(3);
+                        expect(post2.negCount).toEqual(0);
+
+                        expect(post3.posCount).toEqual(0);
+                        expect(post3.negCount).toEqual(0);
+
+                        deferred.resolve(true);
+                    },
+                    Functions.failTest(self));
+                return deferred.promise;
+            });
+
+            console.log('fetch strategies is : ' + JSON.stringify(fetchStrategies));
+
+            Q.all(fetchStrategies).then(function(){
+                allDone1 = true;
+            }, Functions.failTest(self));
+
+        });
+
+
+        waitsFor(function(){
+            return allDone1;
+        }, "allDone1 never finished", 10000);
+
+
+        var allDone2 = false;
+
+        runs(function() {
+
+            var postIds = posts.map(Functions.getId());
+            function checkUser(userId, expectedVoteValues) {
+                var deferred = Q.defer();
+
+                console.log('user id is ' + userId);
+
+                Q.all(dao.findVotesByUserIdAndPostIds(userId, postIds)).then(
+                function(votes){
+                    var voteValues = postIds.map(function(postId){
+                        var vote = _.findWhere(votes, {postId : postId});
+                        return vote ? vote.positive : null;
+                    });
+                    expect(voteValues).toEqual(expectedVoteValues);
+                    deferred.resolve(true);
+                },
+                Functions.failTest(self)
+                );
+                return deferred.promise;
+            }
+
+            Q.all([
+                // user 1 voted up post 1 and post 2
+                checkUser(users[0]._id, [true, true, null]),
+                // user 2 voted down post1 and up post 2
+                checkUser(users[1]._id, [false, true, null]),
+                // user 3 only voted up post 2
+                checkUser(users[2]._id, [null, true, null])
+            ]).then(function(){
+                    allDone2 = true;
+            }, Functions.failTest(self));
+        });
+
+        waitsFor(function(){
+            return allDone2;
+        }, "allDone2 never finished", 10000);
+
+
+    });
   
   
 });

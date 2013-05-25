@@ -46,4 +46,34 @@ module.exports = [{
             emit(doc.timestamp, null);
         }
     }
-}];
+}, {
+    name : 'post_details',
+    map : function(doc) {
+        if (doc.type === 'vote' && doc.postId) {
+            emit(doc.postId, {
+                posCount : (doc.positive ? 1 : 0),
+                negCount : (doc.positive ? 0 : 1)
+            });
+        }
+    },
+    reduce : function (key, values) {
+        var result = {
+            posCount : 0,
+            negCount  : 0
+        };
+        for (var i = 0; i < values.length ; i++) {
+            var value = values[i];
+            result.posCount = result.posCount + value.posCount;
+            result.negCount = result.negCount + value.negCount;
+        }
+        return result;
+    }
+}, {
+    name : 'by_user_and_post',
+    map : function(doc) {
+        if (doc.type === 'vote' && doc.userId && doc.postId) {
+            emit([doc.userId, doc.postId], null);
+        }
+    }
+}
+];
