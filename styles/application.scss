@@ -64,7 +64,7 @@ footer {
 }
 
 #main-view {
-    
+
 }
 
 h1 {
@@ -76,14 +76,14 @@ h3 {
 }
 
 .section-title {
-    
+
     text-align : center;
     padding-bottom: 1em;
     span {
         @include text-border($textBorderColor, $textBorderWidth);
         @include main-logo(0.2em);
         font-size: 1.5em;
-        
+
     }
 }
 
@@ -91,7 +91,7 @@ h3 {
     font-size  : 1.2em;
     line-height: 1.2em;
     p {
-        
+
         padding-bottom: 1em;
     }
 }
@@ -100,7 +100,7 @@ h3 {
     white-space: nowrap;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
-    
+
     span {
         @include text-border($textBorderColor, $textBorderWidth);
         @include main-logo(0.1em);
@@ -134,19 +134,19 @@ h3 {
 /* fade in and out animation */
 
 .fadeIn-setup,.fadeOut-setup {
-  -webkit-transition: $fadeTime linear opacity;
-  -moz-transition: $fadeTime linear opacity;
-  -o-transition: $fadeTime linear opacity;
-  transition: $fadeTime linear opacity;
+    -webkit-transition: $fadeTime linear opacity;
+    -moz-transition: $fadeTime linear opacity;
+    -o-transition: $fadeTime linear opacity;
+    transition: $fadeTime linear opacity;
 }
 .fadeIn-setup{
-  opacity:0;
+    opacity:0;
 }
 .fadeOut-setup{
-  opacity:1;
+    opacity:1;
 }
 .fadeIn-setup.fadeIn-start {
-  opacity: 1;
+    opacity: 1;
 }
 .fadeOut-setup.fadeOut-start{
     opacity:0;
