@@ -1,5 +1,4 @@
 /*Simple POJO for a vote from a user on a post */
-(function(){
 
 "use strict";
 
@@ -21,5 +20,3 @@ Vote.prototype.equals = function(other) {
 };
 
 module.exports = Vote;
-
-})();

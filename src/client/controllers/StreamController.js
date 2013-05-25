@@ -2,7 +2,6 @@
  * Super cool socket controller for the stream of user data coming from the client.
  */
 
-(function(){
 
 "use strict";
 
@@ -42,5 +41,3 @@ angular.module('one-good-turn').controller('StreamController',
 
     
 }]);
-
-})();

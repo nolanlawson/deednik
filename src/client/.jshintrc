@@ -9,6 +9,7 @@
     "nonew": true,
     "undef": true,
     "strict": true,
+    "globalstrict": true,
     "globals": {
         "angular": true,
         "io": true,

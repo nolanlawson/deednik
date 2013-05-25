@@ -1,5 +1,4 @@
 /*Simple POJO for a user*/
-(function(){
 
 "use strict";
 
@@ -19,5 +18,3 @@ User.prototype.equals = function(other) {
 };
 
 module.exports = User;
-
-})();

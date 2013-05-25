@@ -1,7 +1,5 @@
 /* Simple POJO for a post by a user */
 
-(function(){
-
 "use strict";
 
 var _ = require('underscore');
@@ -21,6 +19,3 @@ Post.prototype.equals = function(other) {
 };
 
 module.exports = Post;
-
-
-})();

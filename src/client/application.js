@@ -1,10 +1,9 @@
 /*
  * Main Angular definitions for 1 Good Turn.
  */
-(function() {
 
 "use strict";
-    
+
 angular.module('one-good-turn', []).
 constant('constants', {
     // max post size
@@ -34,5 +33,3 @@ config(['$routeProvider', function($routeProvider) {
         redirectTo : '/home'
     });
 }]);
-
-})();

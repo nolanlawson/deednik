@@ -2,7 +2,6 @@
  * Super cool web socket service!  Thanks HTML5rocks docs!
  * @see http://www.html5rocks.com/en/tutorials/frameworks/angular-websockets/
  */
-(function() {
 
 "use strict";
 
@@ -29,5 +28,3 @@ angular.module('one-good-turn').factory('socket', ['$rootScope', function ($root
     }
   };
 }]);
-
-})();

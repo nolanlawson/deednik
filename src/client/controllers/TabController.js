@@ -2,11 +2,10 @@
  * TabController to handle the tab navigation
  */
 
-(function(){
-
 "use strict";
 
-angular.module('one-good-turn').controller('TabController', [ '$scope', '$location', function($scope, $location){
+angular.module('one-good-turn').controller('TabController', [ '$scope', '$location',
+        function($scope, $location){
     
     function Tab(id, title) {
         this.id = id;
@@ -24,5 +23,3 @@ angular.module('one-good-turn').controller('TabController', [ '$scope', '$locati
     $scope.selectedTabId = $location.path() === '/about' ? 'about' : 'home';
     
 }]);
-
-})();

@@ -1,16 +1,15 @@
 /*
  * Service representing the list of recent posts shown in the main view.
  */
-(function() {
 
-    "use strict";
+"use strict";
 
-    function RecentPosts(restServer) {
-        var self = this;
-        this.list = [];
-        this.exhausted = false;
+function RecentPosts(restServer) {
+    var self = this;
+    this.list = [];
+    this.exhausted = false;
 
-        restServer.findLastPosts().
+    restServer.findLastPosts().
         success(function(response){
             self.list.splice(0, self.list.length);
             _.forEach(response.rows, function(post){
@@ -21,20 +20,18 @@
             // TODO: handle a fail more gracefully
             window.console.log('failed to get, got args: ' + JSON.stringify([data, status, headers, config]));
         });
+}
+
+RecentPosts.prototype.addToFront = function(post) {
+    if (!_.findWhere(this.list,{_id : post._id})) {
+        this.list.splice(0, 0, post);
     }
+};
 
-    RecentPosts.prototype.addToFront = function(post) {
-        if (!_.findWhere(this.list,{_id : post._id})) {
-            this.list.splice(0, 0, post);
-        }
-    };
+RecentPosts.prototype.addToBack = function(post) {
+    if (!_.findWhere(this.list,{_id : post._id})) {
+        this.list.push(post);
+    }
+};
+angular.module('one-good-turn').service('recentPosts', ['restServer', RecentPosts]);
 
-    RecentPosts.prototype.addToBack = function(post) {
-        if (!_.findWhere(this.list,{_id : post._id})) {
-            this.list.push(post);
-        }
-    };
-
-    angular.module('one-good-turn').service('recentPosts', ['restServer', RecentPosts]);
-
-})();

@@ -71,7 +71,9 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: '/*! Application <%= pkg.name %> v<%= pkg.version %>, created by Nolan Lawson, ' +
-                'built by Grunt on <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                'built by Grunt on <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+        wrap : "oneGoodTurn",
+        report : "gzip"
       },
       build: {
         src : 'build/js/application-concat.js',
