@@ -6,6 +6,8 @@
 function UserVotes(restServer) {
     var self = this;
 
+    var CHECK_INTERVAL = 3000;
+
     self.votes = {};
     self.dirtyVotes = {};
     self.postInProgress = false;
@@ -38,16 +40,36 @@ function UserVotes(restServer) {
                 });
 
         }
-    }, 4000);
+    }, CHECK_INTERVAL);
 }
 
-UserVotes.prototype.getOpinion = function(postId) {
-    return this.votes[postId] || 'neutral';
+UserVotes.prototype.getOpinion = function(post) {
+    return this.votes[post._id] || 'neutral';
 };
 
-UserVotes.prototype.updateOpinion = function(postId, opinion) {
-    this.votes[postId] = opinion;
-    this.dirtyVotes[postId] = opinion;
+UserVotes.prototype.updateOpinion = function(post, opinion) {
+    var oldOpinion = this.votes[post._id];
+
+    this.votes[post._id] = opinion;
+    this.dirtyVotes[post._id] = opinion;
+
+    if (oldOpinion !== 'pos' && opinion === 'pos') {
+        post.posCount++;
+    } else if (oldOpinion !== 'neg' && opinion === 'neg') {
+        post.negCount++;
+    }
+
+    if (oldOpinion === 'neg' && opinion !== 'neg') {
+        post.negCount--;
+    } else if (oldOpinion === 'pos' && opinion !== 'pos') {
+        post.posCount--;
+    }
+};
+
+UserVotes.prototype.toggleOpinion = function(post, opinion) {
+    var oldOpinion = this.votes[post._id];
+
+    this.updateOpinion(post, oldOpinion === opinion ? 'neutral' : opinion);
 };
 
 angular.module('one-good-turn').service('userVotes', ['restServer', UserVotes]);

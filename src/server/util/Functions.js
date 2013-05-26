@@ -26,6 +26,12 @@ var functions = {
         return function(err){
             spec.fail(new Error(err));
         };
+    },
+
+    isString : function() {
+        return function(element) {
+            return typeof element === 'string';
+        };
     }
 };
 

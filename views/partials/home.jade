@@ -26,12 +26,14 @@ header
           .well
             .align-right
               .thumb-and-count
-                .thumb.selected
-                  .icon-thumbs-up.icon-white
+                .thumb(ng-click="userVotes.toggleOpinion(post,'pos')",
+                      ng-class="{selected : userVotes.getOpinion(post) == 'pos'}")
+                  .icon-thumbs-up(ng-class="{'icon-white' : userVotes.getOpinion(post) == 'pos'}")
                 span {{post.posCount}}
               .thumb-and-count
-                .thumb
-                  .icon-thumbs-down
+                .thumb(ng-click="userVotes.toggleOpinion(post,'neg')",
+                      ng-class="{selected : userVotes.getOpinion(post) == 'neg'}")
+                  .icon-thumbs-down(ng-class="{'icon-white' : userVotes.getOpinion(post) == 'neg'}")
                 span {{post.negCount}}
             span {{post.content}}
             small.pull-right.muted {{getFriendlyDate(post)}}

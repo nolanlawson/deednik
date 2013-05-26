@@ -339,6 +339,13 @@ function DAO(options) {
         return queryViewAndPromise('by_user_id_and_post_id', {keys : keys}, true);
     };
 
+    /*
+     * returns a list of promises for the votes, or empty if there are none
+     */
+    self.findVotesByUserId = function(userId) {
+        return queryViewAndPromise('votes_by_user_id', {key : userId}, true);
+    };
+
      /*
       * returns a promise for a list of posts
       */

@@ -76,6 +76,13 @@ module.exports = [{
         }
     }
 }, {
+    name : 'votes_by_user_id',
+    map : function(doc) {
+        if (doc.type === 'vote' && doc.userId) {
+            emit(doc.userId, null);
+        }
+    }
+}, {
     name : 'count_type',
     map : function(doc) {
         emit(doc.type, 1);

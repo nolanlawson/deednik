@@ -127,11 +127,11 @@ module.exports = function(grunt) {
                 tasks : ['sass']
             },
             serverjs : {
-                files : ['spec/server/**/*.js', 'src/server/**.*.js', '!**/*.min.js'],
+                files : ['src/server/**.*', 'spec/server/**/*.js', '!**/*.min.js'],
                 tasks : ['jshint', 'jasmine_node']
             },
             clientjs : {
-                files : ['spec/client/**/*.js', 'src/client/**.*.js', '!**/*.min.js'],
+                files : ['src/client/**/*', 'spec/client/**/*.js', '!**/*.min.js'],
                 tasks : ['jshint', 'jasmine:unminified', 'build', 'jasmine:minified']
             }
         }
@@ -151,6 +151,6 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('build', ['clean', 'copy', 'concat', 'uglify', 'sass']);
     grunt.registerTask('test', ['jshint', 'jasmine_node', 'jasmine:unminified', 'build', 'jasmine:minified']);
-    grunt.registerTask('default', ['test', 'watch']);
+    grunt.registerTask('default', ['test', 'watch:all']);
 
 };

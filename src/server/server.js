@@ -71,6 +71,45 @@ app.post('/jsapi-v1/insertPost', function(req, res){
     
 
 });
+app.get('/jsapi-v1/findUserVotes', function(req, res){
+    console.log('/jsapi-v1/findUserVotes from ' + req.connection.remoteAddress);
+
+    var userGuid = req.connection.remoteAddress;
+
+    dao.upsertUser(userGuid).then(function(user){
+        return dao.findVotesByUserId(user._id);
+    }).then(function(votes){
+            res.json({success : true, rows : votes});
+        },function(err){
+            res.json({error : err});
+        }).done();
+});
+
+app.post('/jsapi-v1/postUserVotes', function(req, res){
+    console.log('/jsapi-v1/postUserVotes from ' + req.connection.remoteAddress);
+
+    var votes = req.param('votes');
+
+    if (typeof votes !== 'object' ||
+        !_.every(_.keys(votes), Functions.isString()) ||
+        !_.every(_.values(votes), Functions.isString())) {
+
+        res.json({error : 'votes must be valid string->string object'});
+        return;
+    }
+
+    var userGuid = req.connection.remoteAddress;
+
+    dao.upsertUser(userGuid).then(function(user){
+        return dao.upsertVotes(user._id, votes);
+    }).then(function(){
+            res.json({success : true});
+        },function(err){
+            res.json({error : err});
+        }).done();
+
+});
+
 
 /**
  * render posts in JSON, with any post details included

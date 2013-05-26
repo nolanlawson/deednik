@@ -222,7 +222,31 @@ describe("DAO test suite #2", function() {
 
         waitsFor(function(){return done2;}, 'done2', 5000);
 
+    });
 
+    it("can find votes by user ids", function(){
+        var self = this;
+
+        var done = false;
+
+        runs(function(){
+            Q.all([
+                    dao.findVotesByUserId(users[0]._id),
+                    dao.findVotesByUserId(users[1]._id),
+                    dao.findVotesByUserId(users[2]._id),
+                    dao.findVotesByUserId("fakeUser")
+                ]).spread(function(user1votes, user2votes, user3votes, fakeUserVotes){
+
+                    expect(user1votes.length).toEqual(2);
+                    expect(user2votes.length).toEqual(2);
+                    expect(user3votes.length).toEqual(1);
+                    expect(fakeUserVotes.length).toEqual(0);
+
+                    done = true;
+                }, Functions.failTest(self)).done();
+        });
+
+        waitsFor(function(){return done;}, 'done', 5000);
     });
 
 });

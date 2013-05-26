@@ -6,10 +6,11 @@
 "use strict";
 
 angular.module('one-good-turn').controller('RecentPostsController',
-    ['$rootScope', '$scope', 'socket', 'restServer', 'recentPosts',
-            function($rootScope, $scope, socket, restServer, recentPosts){
+    ['$rootScope', '$scope', 'socket', 'restServer', 'recentPosts', 'userVotes',
+            function($rootScope, $scope, socket, restServer, recentPosts, userVotes){
 
     $scope.recentPosts = recentPosts;
+    $scope.userVotes = userVotes;
 
     // do this whenever the controller is created to request new data
     socket.on('init', function(){

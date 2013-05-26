@@ -5,6 +5,10 @@ describe("UserVotesService", function(){
     var _$httpBackend;
     var _userVotesService;
 
+    function fakePost(postId) {
+        return {_id : postId};
+    }
+
     beforeEach(module('one-good-turn'));
 
     beforeEach(inject(function($injector) {
@@ -40,30 +44,30 @@ describe("UserVotesService", function(){
         }, 'userVotesService never initialized', 5000);
 
         runs(function(){
-            expect( _userVotesService.getOpinion('foo')).toEqual("pos");
-            expect( _userVotesService.getOpinion('baz')).toEqual("neg");
-            expect( _userVotesService.getOpinion('bar')).toEqual("neutral");
-            expect( _userVotesService.getOpinion('quux')).toEqual("pos");
-            expect( _userVotesService.getOpinion('toto')).toEqual("neutral");
-            expect( _userVotesService.getOpinion('hehe')).toEqual("neutral");
+            expect( _userVotesService.getOpinion(fakePost('foo'))).toEqual("pos");
+            expect( _userVotesService.getOpinion(fakePost('baz'))).toEqual("neg");
+            expect( _userVotesService.getOpinion(fakePost('bar'))).toEqual("neutral");
+            expect( _userVotesService.getOpinion(fakePost('quux'))).toEqual("pos");
+            expect( _userVotesService.getOpinion(fakePost('toto'))).toEqual("neutral");
+            expect( _userVotesService.getOpinion(fakePost('hehe'))).toEqual("neutral");
         });
 
         runs(function(){
             _$httpBackend.expect('POST', '/jsapi-v1/postUserVotes', {votes : {foo : "neg", toto: "pos"}});
             // user changes his mind about foo a couple times
-            _userVotesService.updateOpinion('foo', 'pos');
-            _userVotesService.updateOpinion('foo', 'neutral');
-            _userVotesService.updateOpinion('foo', 'neg');
-            _userVotesService.updateOpinion('toto', 'pos');
+            _userVotesService.updateOpinion(fakePost('foo'), 'pos');
+            _userVotesService.updateOpinion(fakePost('foo'), 'neutral');
+            _userVotesService.updateOpinion(fakePost('foo'), 'neg');
+            _userVotesService.updateOpinion(fakePost('toto'), 'pos');
         });
 
         runs(function(){
-            expect( _userVotesService.getOpinion('foo')).toEqual("neg");
-            expect( _userVotesService.getOpinion('baz')).toEqual("neg");
-            expect( _userVotesService.getOpinion('bar')).toEqual("neutral");
-            expect( _userVotesService.getOpinion('quux')).toEqual("pos");
-            expect( _userVotesService.getOpinion('toto')).toEqual("pos");
-            expect( _userVotesService.getOpinion('hehe')).toEqual("neutral");
+            expect( _userVotesService.getOpinion(fakePost('foo'))).toEqual("neg");
+            expect( _userVotesService.getOpinion(fakePost('baz'))).toEqual("neg");
+            expect( _userVotesService.getOpinion(fakePost('bar'))).toEqual("neutral");
+            expect( _userVotesService.getOpinion(fakePost('quux'))).toEqual("pos");
+            expect( _userVotesService.getOpinion(fakePost('toto'))).toEqual("pos");
+            expect( _userVotesService.getOpinion(fakePost('hehe'))).toEqual("neutral");
         });
 
         waitsFor(function(){
@@ -82,18 +86,18 @@ describe("UserVotesService", function(){
         runs(function(){
             _$httpBackend.expect('POST', '/jsapi-v1/postUserVotes',
                 {votes:{hehe:"neg",toto:"neutral",foo:"pos"}});
-            _userVotesService.updateOpinion('hehe', 'neg');
-            _userVotesService.updateOpinion('toto', 'neutral');
-            _userVotesService.updateOpinion('foo', 'pos');
+            _userVotesService.updateOpinion(fakePost('hehe'), 'neg');
+            _userVotesService.updateOpinion(fakePost('toto'), 'neutral');
+            _userVotesService.updateOpinion(fakePost('foo'), 'pos');
         });
 
         runs(function(){
-            expect( _userVotesService.getOpinion('foo')).toEqual("pos");
-            expect( _userVotesService.getOpinion('baz')).toEqual("neg");
-            expect( _userVotesService.getOpinion('bar')).toEqual("neutral");
-            expect( _userVotesService.getOpinion('quux')).toEqual("pos");
-            expect( _userVotesService.getOpinion('toto')).toEqual("neutral");
-            expect( _userVotesService.getOpinion('hehe')).toEqual("neg");
+            expect( _userVotesService.getOpinion(fakePost('foo'))).toEqual("pos");
+            expect( _userVotesService.getOpinion(fakePost('baz'))).toEqual("neg");
+            expect( _userVotesService.getOpinion(fakePost('bar'))).toEqual("neutral");
+            expect( _userVotesService.getOpinion(fakePost('quux'))).toEqual("pos");
+            expect( _userVotesService.getOpinion(fakePost('toto'))).toEqual("neutral");
+            expect( _userVotesService.getOpinion(fakePost('hehe'))).toEqual("neg");
         });
 
         waits(5000);
