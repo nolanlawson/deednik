@@ -48,7 +48,12 @@ viewHandler.init(app, APP_INFO);
 
 function getUserIpAddress(req) {
     // on production, I'm behind a Nginx proxy
-    return PRODUCTION ? req.headers['X-Forwarded-For'] : req.connection.remoteAddress;
+    console.log('req is ' + JSON.stringify(_.keys(req)));
+    console.log('req.connection is ' + JSON.stringify(_.keys(req.connection)));
+    console.log('req.headers is ' + JSON.stringify(_.keys(req.headers)));
+    return PRODUCTION ?
+        (req.headers['X-Forwarded-For'] || req.connection.remoteAddress) :
+        req.headers['user-agent']; // every browser is its own user
 }
 
 app.post('/jsapi-v1/insertPost', function(req, res){
