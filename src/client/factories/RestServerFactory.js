@@ -19,24 +19,25 @@ angular.module('one-good-turn').factory('restServer', ['$http', function ($http)
         findPostsByTimestampSince : function(timestamp, limit) {
             return $http({
                 method : 'GET',
-                url    : '/jsapi-v1/findPostsByTimestampSince?timestamp=' +
-                    encodeURIComponent(timestamp) + '&limit=' + encodeURIComponent(limit || 10)
+                url    : '/jsapi-v1/findPostsByTimestampSince',
+                params : {timestamp : timestamp, limit : (limit || 10)}
             });
         },
 
         findPostsByTimestampBefore : function(timestamp, limit) {
             return $http({
                 method : 'GET',
-                url    : '/jsapi-v1/findPostsByTimestampBefore?timestamp=' +
-                    encodeURIComponent(timestamp) + '&limit=' + encodeURIComponent(limit || 10)
+                url    : '/jsapi-v1/findPostsByTimestampBefore',
+                params : {timestamp : timestamp, limit : (limit || 10)}
             });
         },
 
         insertPost : function(postContent) {
-            var url = '/jsapi-v1/insertPost?postContent=' + encodeURIComponent(postContent);
+            var url = '/jsapi-v1/insertPost';
             return $http({
-                method: 'GET',
-                url: url
+                method: 'POST',
+                url: url,
+                data: {postContent : postContent}
             });
         }
     };

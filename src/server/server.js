@@ -45,7 +45,7 @@ socketServer.init(server);
 var viewHandler = new ViewHandler();
 viewHandler.init(app, APP_INFO);
 
-app.get('/jsapi-v1/insertPost', function(req, res){
+app.post('/jsapi-v1/insertPost', function(req, res){
     console.log('/jsapi-v1/insertPost from ' + req.connection.remoteAddress);
 
     req.assert('postContent', 'Invalid postContent').notEmpty().len(MIN_POST_SIZE, MAX_POST_SIZE);
@@ -55,7 +55,7 @@ app.get('/jsapi-v1/insertPost', function(req, res){
         return;
     }
 
-    var content = req.query.postContent.toString();
+    var content = req.param('postContent');
     
     var post = new Post(content);
     
@@ -82,7 +82,7 @@ app.get('/jsapi-v1/findLastPosts', function(req, res){
         return;
     }
 
-    var n = req.query.n;
+    var n = req.param('n');
 
     console.log('getting last ' + n + ' timestamps');
 
@@ -108,8 +108,8 @@ app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
         return;
     }
 
-    var timestamp = req.query.timestamp;
-    var limit = req.query.limit;
+    var timestamp = req.param('timestamp');
+    var limit = req.param('limit');
 
     dao.findPostsByTimestampBefore(timestamp, limit).
         then(function(rows){
@@ -132,8 +132,8 @@ app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
         return;
     }
 
-    var timestamp = req.query.timestamp;
-    var limit = req.query.limit;
+    var timestamp = req.param('timestamp');
+    var limit = req.param('limit');
     
     dao.findPostsByTimestampSince(timestamp, limit).
     then(function(rows){
