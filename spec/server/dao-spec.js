@@ -57,6 +57,25 @@ afterEach(function(){
 describe("DAO test suite", function() {
 
     it("saves users, posts, and votes to the database", function() {
+        var self = this;
+
+        var checkedZeroCount = false;
+
+        runs(function(){
+            Q.all([
+                    dao.countType('user'),
+                    dao.countType('post'),
+                    dao.countType('vote')
+                ]).spread(function(userCount, postCount, voteCount) {
+                    expect(userCount).toEqual(0);
+                    expect(postCount).toEqual(0);
+                    expect(voteCount).toEqual(0);
+                    checkedZeroCount = true;
+                }, Functions.failTest(self));
+        });
+
+
+        waitsFor(function(){return checkedZeroCount;}, 'checkedZeroCount', 5000);
 
         var user = new User('fooId');
         var post = new Post('foo');
@@ -97,6 +116,23 @@ describe("DAO test suite", function() {
             expect(vote._id).toEqual(jasmine.any(String));
             expect(vote._rev).toEqual(jasmine.any(String));
         });
+
+        var checkedNonZeroCount = false;
+
+        runs(function(){
+            Q.all([
+                    dao.countType('user'),
+                    dao.countType('post'),
+                    dao.countType('vote')
+                ]).spread(function(userCount, postCount, voteCount) {
+                    expect(userCount).toEqual(1);
+                    expect(postCount).toEqual(1);
+                    expect(voteCount).toEqual(1);
+                    checkedNonZeroCount = true;
+                }, Functions.failTest(self));
+        });
+
+        waitsFor(function(){return checkedNonZeroCount;}, 'checkedNonZeroCount', 5000);
 
         var checked = false;
 

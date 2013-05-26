@@ -189,4 +189,25 @@ describe("DAO test suite #2", function() {
 
     });
 
+    xit("upserts users", function() {
+        var self = this;
+
+        var done1 = false;
+
+        // upsert user 1, check there are still only 3
+        dao.upsertUser('foo').then(function(user){
+            expect(user._id).toEqual(users[0]._id);
+            dao.count("user").then(function(count){
+                expect(count).toEqual(3);
+                done1 = true;
+            }, Functions.failTest(self));
+        }, Functions.failTest(self));
+
+
+        // upsert user 4, check that there are now 4
+
+    });
+
 });
+
+

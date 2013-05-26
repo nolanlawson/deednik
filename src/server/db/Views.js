@@ -75,5 +75,13 @@ module.exports = [{
             emit([doc.userId, doc.postId], null);
         }
     }
+}, {
+    name : 'count_type',
+    map : function(doc) {
+        emit(doc.type, 1);
+    },
+    reduce : function(key, values) {
+        return sum(values);
+    }
 }
 ];

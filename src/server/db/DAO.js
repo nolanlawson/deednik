@@ -106,7 +106,7 @@ function DAO(options) {
             if (err) {
                 deferred.reject(new Error(err));
             } else if (!(body && body.rows && (returnMultiple || (body.rows[0] && (noDoc || body.rows[0].doc))))) {
-                if (defaultValue) {
+                if (typeof defaultValue !== 'undefined') {
                     deferred.resolve(defaultValue);
                 } else {
                     deferred.reject(new Error("unacceptable body received: " + JSON.stringify(body)));
@@ -285,6 +285,13 @@ function DAO(options) {
 
             });
         return deferred.promise;
+    };
+
+    /*
+     * return a promise for a count of a given type, e.g. "user" or "post" or "vote"
+     */
+    self.countType = function(type) {
+        return queryViewAndPromise('count_type', {key : type}, false, true, 0);
     };
 
     /*
