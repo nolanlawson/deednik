@@ -46,6 +46,11 @@ socketServer.init(server);
 var viewHandler = new ViewHandler();
 viewHandler.init(app, APP_INFO);
 
+function getUserIpAddress(req) {
+    // on production, I'm behind a Nginx proxy
+    return PRODUCTION ? req.headers['X-Forwarded-For'] : req.connection.remoteAddress;
+}
+
 app.post('/jsapi-v1/insertPost', function(req, res){
     console.log('/jsapi-v1/insertPost from ' + req.connection.remoteAddress);
 
@@ -58,7 +63,7 @@ app.post('/jsapi-v1/insertPost', function(req, res){
 
     var content = req.param('postContent');
     var post = new Post(content);
-    var userGuid = req.connection.remoteAddress;
+    var userGuid = getUserIpAddress(req);
 
     // steps to perform:
     // save post -> upsert user -> upsert new "pos" vote -> lookup post details -> inform sockets
@@ -91,7 +96,7 @@ app.post('/jsapi-v1/insertPost', function(req, res){
 app.get('/jsapi-v1/findUserVotes', function(req, res){
     console.log('/jsapi-v1/findUserVotes from ' + req.connection.remoteAddress);
 
-    var userGuid = req.connection.remoteAddress;
+    var userGuid = getUserIpAddress(req);
 
     dao.upsertUser(userGuid).then(function(user){
         return dao.findVotesByUserId(user._id);
@@ -115,7 +120,7 @@ app.post('/jsapi-v1/postUserVotes', function(req, res){
         return;
     }
 
-    var userGuid = req.connection.remoteAddress;
+    var userGuid = getUserIpAddress(req);
 
     dao.upsertUser(userGuid).then(function(user){
         return dao.upsertVotes(user._id, votes);
