@@ -14,8 +14,6 @@ function SocketServer(){
 SocketServer.prototype.onNewPost = function(postWithDetails) {
     var self = this;
 
-
-
     // inform the sockets that we have a new post
     // TODO: batch these
     self.sockets.forEach(function(socket){

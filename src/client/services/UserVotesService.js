@@ -6,7 +6,7 @@
 function UserVotes(restServer) {
     var self = this;
 
-    var CHECK_INTERVAL = 3000;
+    var CHECK_INTERVAL = 2000;
 
     self.votes = {};
     self.dirtyVotes = {};
@@ -43,26 +43,37 @@ function UserVotes(restServer) {
     }, CHECK_INTERVAL);
 }
 
-UserVotes.prototype.getOpinion = function(post) {
-    return this.votes[post._id] || 'neutral';
+UserVotes.prototype.getOpinion = function(postOrPostId) {
+
+    var postId = typeof postOrPostId === 'string' ? postOrPostId : postOrPostId._id;
+
+    return this.votes[postId] || 'neutral';
 };
 
-UserVotes.prototype.updateOpinion = function(post, opinion) {
-    var oldOpinion = this.votes[post._id];
+UserVotes.prototype.updateOpinion = function(postOrPostId, opinion) {
 
-    this.votes[post._id] = opinion;
-    this.dirtyVotes[post._id] = opinion;
+    var postId = typeof postOrPostId === 'string' ? postOrPostId : postOrPostId._id;
 
-    if (oldOpinion !== 'pos' && opinion === 'pos') {
-        post.posCount++;
-    } else if (oldOpinion !== 'neg' && opinion === 'neg') {
-        post.negCount++;
-    }
+    var oldOpinion = this.votes[postId];
 
-    if (oldOpinion === 'neg' && opinion !== 'neg') {
-        post.negCount--;
-    } else if (oldOpinion === 'pos' && opinion !== 'pos') {
-        post.posCount--;
+    this.votes[postId] = opinion;
+    this.dirtyVotes[postId] = opinion;
+
+    if (typeof postOrPostId !== 'string') {
+        var post = postOrPostId;
+        // update for the UI as well, since this is coming from the list of recent posts,
+        // not a new post from the same user
+        if (oldOpinion !== 'pos' && opinion === 'pos') {
+            post.posCount++;
+        } else if (oldOpinion !== 'neg' && opinion === 'neg') {
+            post.negCount++;
+        }
+
+        if (oldOpinion === 'neg' && opinion !== 'neg') {
+            post.negCount--;
+        } else if (oldOpinion === 'pos' && opinion !== 'pos') {
+            post.posCount--;
+        }
     }
 };
 

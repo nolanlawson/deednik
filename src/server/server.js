@@ -57,24 +57,36 @@ app.post('/jsapi-v1/insertPost', function(req, res){
     }
 
     var content = req.param('postContent');
-    
     var post = new Post(content);
+    var userGuid = req.connection.remoteAddress;
 
+    // steps to perform:
+    // save post -> upsert user -> upsert new "pos" vote -> lookup post details -> inform sockets
+    // (the user should, by default, "like" his/her own post)
+    var savedPost, user, votes, savedPostWithDetails;
+    var successFromUsersPov; // the user doesn't care about other sockets
     dao.save(post).
-        then(function(savedPost){
-            // notify any listening clients on the socket
-            dao.findPostDetails(savedPost._id).then(function(postDetails){
-                    var postWithDetails = _.extend(savedPost, postDetails);
-                    socketServer.onNewPost(postWithDetails);
-                    res.json({success : true});
-                },
-                function(err){
-                    res.json({error : err});
-                }).done();
+        then(function(_savedPost){
+            savedPost = _savedPost;
+            votes = {};
+            votes[savedPost._id] = "pos";
+            return dao.upsertUser(userGuid);
+        }).then(function(_user){
+            user = _user;
+            return dao.upsertVotes(user._id, votes);
+        }).then(function(){
+            res.json({success : true, postId : savedPost._id});
+            successFromUsersPov = true;
+            return dao.findPostDetails(savedPost._id);
+        }).then(function(postDetails){
+            savedPostWithDetails = _.extend(savedPost, postDetails);
+            socketServer.onNewPost(savedPostWithDetails);
         }, function(err){
-            res.json({error : err});
+            if (!successFromUsersPov) {
+                res.json({error : err});
+            }
+            console.log('serious error while posting: ' + err);
         }).done();
-
 });
 app.get('/jsapi-v1/findUserVotes', function(req, res){
     console.log('/jsapi-v1/findUserVotes from ' + req.connection.remoteAddress);

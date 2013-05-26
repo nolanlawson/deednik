@@ -7,7 +7,8 @@
 
 angular.module('one-good-turn').controller('NewPostController',
     ['$scope', '$rootScope', 'restServer', 'constants', 'recentPosts', 'newPost',
-        function ($scope, $rootScope, restServer, constants, recentPosts, newPost) {
+        'userVotes',
+        function ($scope, $rootScope, restServer, constants, recentPosts, newPost, userVotes) {
 
 
     $scope.recentPosts = recentPosts;
@@ -39,9 +40,13 @@ angular.module('one-good-turn').controller('NewPostController',
             // TODO: post instead of get?
 
             restServer.insertPost(newPost.content).
-                success(function () {
-                    window.console.log('posted successfully');
-                    newPost.content = '';
+                success(function (response) {
+                    if (response.success) {
+                        window.console.log('posted successfully');
+                        newPost.content = '';
+                        // user automatically "likes" his own post
+                        userVotes.updateOpinion(response.postId, "pos");
+                    }
                     $scope.disabled = false;
                 }).
                 error(function (data, status, headers, config) {
