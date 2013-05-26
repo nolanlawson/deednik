@@ -16,14 +16,6 @@ angular.module('one-good-turn').factory('restServer', ['$http', function ($http)
             });
         },
 
-        findPostsByTimestampSince : function(timestamp, limit) {
-            return $http({
-                method : 'GET',
-                url    : '/jsapi-v1/findPostsByTimestampSince',
-                params : {timestamp : timestamp, limit : (limit || 10)}
-            });
-        },
-
         findPostsByTimestampBefore : function(timestamp, limit) {
             return $http({
                 method : 'GET',

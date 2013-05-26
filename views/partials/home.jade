@@ -24,6 +24,15 @@ header
             img(src="images/ajax-loader.gif")
         .latestTurns(ng-repeat="post in recentPosts.list",ng-animate="{ enter : 'fadeIn'}")
           .well
+            .align-right
+              .thumb-and-count
+                .thumb.selected
+                  .icon-thumbs-up.icon-white
+                span {{post.posCount}}
+              .thumb-and-count
+                .thumb
+                  .icon-thumbs-down
+                span {{post.negCount}}
             span {{post.content}}
             small.pull-right.muted {{getFriendlyDate(post)}}
         .latestTurns(ng-hide="recentPosts.exhausted")

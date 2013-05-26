@@ -6,6 +6,7 @@ $textBorderColor : #f0f0f0;
 $bodyBg          : #fff;
 $warning         : #c09853;
 $error           : #b94a48;
+$info            : #3a87ad;
 
 /* media queries */
 
@@ -130,6 +131,9 @@ h3 {
 .pull-center {
     text-align : center;
 }
+.align-right {
+    text-align : right;
+}
 
 /* fade in and out animation */
 
@@ -162,4 +166,35 @@ span.muted.warning {
 
 span.muted.error {
     color : $error;
+
+}
+
+.thumb-and-count {
+    text-align : right;
+    display    : inline-block;
+    min-width  : 50px;
+
+    .thumb {
+        display : inline-block;
+        padding : 2px 3px 0px 3px;
+        border-radius : 3px;
+        cursor : hand;
+        cursor : pointer;
+
+    }
+
+    .thumb:hover {
+        border : 1px $border solid;
+
+        margin : -1px;
+    }
+
+    .thumb.selected {
+        background : $info;
+    }
+
+    span {
+        text-align : right;
+        margin-left: 6px;
+    }
 }

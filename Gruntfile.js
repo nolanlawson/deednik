@@ -122,8 +122,18 @@ module.exports = function(grunt) {
             }
         },
         watch : {
-            files : ['spec/**/*.js', 'src/**/*.js', '!**/*.min.js', 'styles/**/*.scss'],
-            tasks : ['test']
+            sass : {
+                files : ['styles/**/*.scss'],
+                tasks : ['sass']
+            },
+            serverjs : {
+                files : ['spec/server/**/*.js', 'src/server/**.*.js', '!**/*.min.js'],
+                tasks : ['jshint', 'jasmine_node']
+            },
+            clientjs : {
+                files : ['spec/client/**/*.js', 'src/client/**.*.js', '!**/*.min.js'],
+                tasks : ['jshint', 'jasmine:unminified', 'build', 'jasmine:minified']
+            }
         }
 
     });

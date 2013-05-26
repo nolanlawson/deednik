@@ -254,10 +254,10 @@ function DAO(options) {
                     deferred.resolve(savedVotes);
                 }, function(err){
                     deferred.reject(err);
-                });
+                }).done();
             }, function(err) {
                 deferred.reject(err);
-            });
+            }).done();
         return deferred.promise;
     };
 
@@ -274,16 +274,16 @@ function DAO(options) {
                     deferred.resolve(vote);
                 }, function(err){
                     deferred.reject(err);
-                });
+                }).done();
             }, function() {
                 // doesn't exist yet, so create new
                 self.save(new Vote("neutral", userId, postId)).then(function(vote){
                     deferred.resolve(vote);
                 }, function(err){
                     deferred.reject(err);
-                });
+                }).done();
 
-            });
+            }).done();
         return deferred.promise;
     };
 
@@ -302,9 +302,9 @@ function DAO(options) {
                     deferred.resolve(user);
                 }, function(err){
                     deferred.reject(err);
-                });
+                }).done();
 
-            });
+            }).done();
         return deferred.promise;
     };
 

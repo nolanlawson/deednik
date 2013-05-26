@@ -25,7 +25,8 @@ var
         DAO          = require('./db/DAO.js'),
         SocketServer = require('./sockets/SocketServer.js'),
         ViewHandler  = require('./views/ViewHandler.js'),
-        Post         = require('./model/Post.js')
+        Post         = require('./model/Post.js'),
+        Functions    = require('./util/Functions.js')
         ;
 
 
@@ -71,6 +72,37 @@ app.post('/jsapi-v1/insertPost', function(req, res){
 
 });
 
+/**
+ * render posts in JSON, with any post details included
+ *  takes an express res object, limit of posts to return, and a dao function to call (with implied arguments
+ *  afterwards)
+ *  i.e. renderPosts(res, limit, fn [, arg1, arg2, arg3 ...])
+ */
+function renderPosts(res, limit, fn) {
+
+    // var args - everything after "fn"
+    var fnArgs = Array.prototype.slice.call(arguments).slice(3);
+
+    fn.apply(dao, fnArgs).
+        then(function(posts){
+
+            dao.findPostDetails(posts.map(Functions.getId())).then(
+                function(postDetails) {
+
+                    var postsWithDetails = posts.map(function(post, idx){
+                        return _.extend(post, postDetails[idx]);
+                    });
+
+                    res.json({success : true, rows : postsWithDetails, exhausted : (posts.length < limit)});
+                }, function(err) {
+                    res.json({error : err});
+                }
+            ).done();
+        }, function(err){
+            res.json({error : err});
+        }).done();
+}
+
 app.get('/jsapi-v1/findLastPosts', function(req, res){
     console.log('/jsapi-v1/findLastPosts');
 
@@ -86,14 +118,7 @@ app.get('/jsapi-v1/findLastPosts', function(req, res){
 
     console.log('getting last ' + n + ' timestamps');
 
-    dao.findLastPosts(n).
-    then(function(rows){
-        res.json({success : true, rows : rows});
-    },
-    function(err){
-        res.json({error : err});
-    });
-
+    renderPosts(res, n, dao.findLastPosts, n);
 });
 
 app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
@@ -111,38 +136,9 @@ app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
     var timestamp = req.param('timestamp');
     var limit = req.param('limit');
 
-    dao.findPostsByTimestampBefore(timestamp, limit).
-        then(function(rows){
-            res.json({success : true, rows : rows, exhausted : (rows.length < limit)});
-        }, function(err){
-            res.json({error : err});
-        }).done();
+    renderPosts(res, limit, dao.findPostsByTimestampBefore, timestamp, limit);
 
 });
-
-app.get('/jsapi-v1/findPostsByTimestampSince', function(req, res){
-
-    req.assert('timestamp', 'Invalid timestamp - should be int').notEmpty().isInt();
-    req.sanitize('timestamp').toInt();
-    req.assert('limit', 'Invalid limit - should be int').notEmpty().isInt();
-    req.sanitize('limit').toInt();
-
-    if (req.validationErrors()) {
-        res.json({error : req.validationErrors(true)});
-        return;
-    }
-
-    var timestamp = req.param('timestamp');
-    var limit = req.param('limit');
-    
-    dao.findPostsByTimestampSince(timestamp, limit).
-    then(function(rows){
-        res.json({success : true, rows : rows, exhausted : (rows.length < limit)});
-    }, function(err){
-        res.json({error : err});
-    }).done();
-});
-
 
 server.listen(PORT);
 console.log('Listening on port ' + PORT + ' in ' + (PRODUCTION ? 'production' : 'development') + ' mode.');
