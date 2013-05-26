@@ -189,22 +189,39 @@ describe("DAO test suite #2", function() {
 
     });
 
-    xit("upserts users", function() {
+    it("upserts users", function() {
         var self = this;
 
         var done1 = false;
 
-        // upsert user 1, check there are still only 3
-        dao.upsertUser('foo').then(function(user){
-            expect(user._id).toEqual(users[0]._id);
-            dao.count("user").then(function(count){
-                expect(count).toEqual(3);
-                done1 = true;
+        runs(function(){
+            // upsert user 1, check there are still only 3
+            dao.upsertUser('foo').then(function(user){
+                expect(user._id).toEqual(users[0]._id);
+                dao.countType("user").then(function(count){
+                    expect(count).toEqual(3);
+                    done1 = true;
+                }, Functions.failTest(self));
             }, Functions.failTest(self));
-        }, Functions.failTest(self));
+        });
 
+        waitsFor(function(){return done1;}, 'done1', 5000);
 
-        // upsert user 4, check that there are now 4
+        var done2 = false;
+
+        runs(function(){
+            // upsert user 2, check that there are now 4
+            dao.upsertUser('quux').then(function(user){
+                expect(user.userGuid).toEqual('quux');
+                dao.countType("user").then(function(count){
+                    expect(count).toEqual(4);
+                    done2 = true;
+                }, Functions.failTest(self));
+            }, Functions.failTest(self));
+        });
+
+        waitsFor(function(){return done2;}, 'done2', 5000);
+
 
     });
 

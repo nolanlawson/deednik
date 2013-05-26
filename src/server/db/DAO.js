@@ -288,6 +288,27 @@ function DAO(options) {
     };
 
     /*
+     * fetch/insert a user based on their userGuid, and return a promise for a user
+     */
+    self.upsertUser = function(userGuid) {
+        var deferred = Q.defer();
+        self.findUserByUserGuid(userGuid).then(
+            function(user) {
+                // already exists, so just return this one; nothing to change
+                deferred.resolve(user);
+            }, function() {
+                // doesn't exist yet, so create new
+                self.save(new User(userGuid)).then(function(user){
+                    deferred.resolve(user);
+                }, function(err){
+                    deferred.reject(err);
+                });
+
+            });
+        return deferred.promise;
+    };
+
+    /*
      * return a promise for a count of a given type, e.g. "user" or "post" or "vote"
      */
     self.countType = function(type) {
