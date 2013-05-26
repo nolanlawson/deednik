@@ -7,6 +7,19 @@
 angular.module('one-good-turn').factory('restServer', ['$http', function ($http) {
 
     return {
+        findUserVotes : function() {
+            return $http({
+                method : 'GET',
+                url    : '/jsapi-v1/findUserVotes'
+            });
+        },
+        postUserVotes : function(votes) {
+            return $http({
+                method : 'POST',
+                url    : '/jsapi-v1/postUserVotes',
+                data   : {votes : votes}
+            });
+        },
         findLastPosts : function(n) {
 
             return $http({

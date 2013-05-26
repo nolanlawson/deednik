@@ -17,3 +17,5 @@ node_modules
 .svn
 build
 .idea
+.grunt
+_SpecRunner.html

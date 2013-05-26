@@ -18,6 +18,7 @@
         "xdescribe" : true,
         "it" : true,
         "expect" : true,
+        "waits"  : true,
         "waitsFor" : true,
         "runs" : true,
         "beforeEach" : true,
