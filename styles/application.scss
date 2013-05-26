@@ -37,11 +37,19 @@ $midDesktop    : "(min-width : #{$midDesktopBreak})";
 
 /* mixins */
 
+@mixin rounded-corners($rad) {
+    -webkit-border-radius: $rad;
+    -moz-border-radius: $rad;
+    -khtml-border-radius: $rad;
+    border-radius: $rad;
+}
+
 @mixin main-logo($radius) {
+    @include rounded-corners($radius);
+
     font-family: 'Chela One', cursive;
     background : $logoBg;
     padding : 0.1em 0.5em;
-    border-radius: $radius;
     font-weight : normal;
 }
 
@@ -76,8 +84,8 @@ footer {
 }
 
 #main-view-container {
+    @include rounded-corners(3px);
     background: $bodyBg;
-    border-radius : 3px;
     border: 1px solid $border;
     font-size : 1.1em;
     padding: 25px;
@@ -179,13 +187,14 @@ h3 {
     background-color: $bodyBg;
 }
 
-span.muted.warning {
-    color : $warning;
-}
-
-span.muted.error {
-    color : $error;
-
+/* special warning/error text */
+span.muted {
+    &.warning {
+        color : $warning;
+    }
+    &.error {
+        color : $error;
+    }
 }
 
 /* area with the thumbs up/down and the counter */
@@ -197,26 +206,24 @@ span.muted.error {
     margin-left : 20px;
 
     .thumb {
+        @include rounded-corners(3px);
         display : inline-block;
         padding : 2px 3px 0px 3px;
-        border-radius : 3px;
         cursor : hand;
         cursor : pointer;
 
-    }
+        &:hover {
+            border : 1px $border solid;
+            margin : -1px;
+        }
 
-    .thumb:hover {
-        border : 1px $border solid;
-        margin : -1px;
-    }
+        &.selected.pos {
+            background : $info;
+        }
 
-    .thumb.selected.pos {
-        background : $info;
-    }
-
-
-    .thumb.selected.neg {
-        background : $error;
+        &.selected.neg {
+            background : $error;
+        }
     }
 
     span {
