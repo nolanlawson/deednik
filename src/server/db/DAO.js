@@ -381,11 +381,11 @@ function DAO(options) {
 
         if (postId instanceof Array) {
             // check multiple ids
-            return queryViewAndPromise('post_details_v2', {keys : postId, reduce : true, group : true},
+            return queryViewAndPromise('post_details_v3', {keys : postId, reduce : true, group : true},
                 true, true, defaultValue);
         } else {
             // check single id
-            return queryViewAndPromise('post_details_v2', {key : postId, reduce : true, group : true},
+            return queryViewAndPromise('post_details_v3', {key : postId, reduce : true, group : true},
                 false, true, defaultValue);
         }
     };

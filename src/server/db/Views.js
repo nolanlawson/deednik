@@ -47,7 +47,7 @@ module.exports = [{
         }
     }
 }, {
-    name : 'post_details_v2',
+    name : 'post_details_v3',
     map : function(doc) {
         if (doc.type === 'vote' && doc.postId) {
             emit(doc.postId, {
