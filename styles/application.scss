@@ -32,6 +32,7 @@ $fadeTime : 0.4s;
     background : $logoBg;
     padding : 0.1em 0.5em;
     border-radius: $radius;
+    font-weight : normal;
 }
 
 @mixin text-border($color, $width) {
