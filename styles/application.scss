@@ -169,6 +169,8 @@ span.muted.error {
 
 }
 
+/* area with the thumbs up/down and the counter */
+
 .thumb-and-count {
     text-align : right;
     display    : inline-block;
@@ -185,16 +187,22 @@ span.muted.error {
 
     .thumb:hover {
         border : 1px $border solid;
-
         margin : -1px;
     }
 
-    .thumb.selected {
+    .thumb.selected.pos {
         background : $info;
+    }
+
+
+    .thumb.selected.neg {
+        background : $error;
     }
 
     span {
         text-align : right;
         margin-left: 6px;
+        float : right;
+        min-width: 40px;
     }
 }
