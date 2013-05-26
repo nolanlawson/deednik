@@ -11,8 +11,10 @@ function SocketServer(){
     this.sockets = [];
 }
 
-SocketServer.prototype.updateSockets = function(post) {
+SocketServer.prototype.onNewPost = function(postWithDetails) {
     var self = this;
+
+
 
     // inform the sockets that we have a new post
     // TODO: batch these
@@ -20,7 +22,7 @@ SocketServer.prototype.updateSockets = function(post) {
         try {
             // TODO: deal with dead sockets eating up memory
             if (socket.volatile) {
-                socket.volatile.emit('new:post', post);
+                socket.volatile.emit('new:post', postWithDetails);
             }
         } catch (err) {
             console.log('error with socket: ' + err);

@@ -59,16 +59,21 @@ app.post('/jsapi-v1/insertPost', function(req, res){
     var content = req.param('postContent');
     
     var post = new Post(content);
-    
+
     dao.save(post).
-    then(function(savedPost){
-        // notify any listening clients on the socket
-        socketServer.updateSockets(savedPost);
-        res.json({success : true});
-    }, function(err){
-        res.json({error : err});
-    }).done();
-    
+        then(function(savedPost){
+            // notify any listening clients on the socket
+            dao.findPostDetails(savedPost._id).then(function(postDetails){
+                    var postWithDetails = _.extend(savedPost, postDetails);
+                    socketServer.onNewPost(postWithDetails);
+                    res.json({success : true});
+                },
+                function(err){
+                    res.json({error : err});
+                }).done();
+        }, function(err){
+            res.json({error : err});
+        }).done();
 
 });
 app.get('/jsapi-v1/findUserVotes', function(req, res){
