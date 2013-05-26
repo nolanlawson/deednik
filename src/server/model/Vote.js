@@ -4,15 +4,15 @@
 
 var _ = require('underscore');
 
-function Vote(positive, userId, postId) {
+function Vote(opinion, userId, postId) {
     this.type = "vote";
-    this.positive = positive;
+    this.opinion = opinion;
     this.userId = userId;
     this.postId = postId;
 }
 
 function toHash(obj) {
-    return _.pick(obj, 'type', 'positive', 'userId', 'postId', '_id', '_rev');
+    return _.pick(obj, 'type', 'opinion', 'userId', 'postId', '_id', '_rev');
 }
 
 Vote.prototype.equals = function(other) {

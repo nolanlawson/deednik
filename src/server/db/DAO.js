@@ -10,6 +10,8 @@ var
     Q     = require('q'),
     _     = require('underscore'),
     views = require('./Views.js'),
+    Vote  = require('../model/Vote.js'),
+    User  = require('../model/User.js'),
 
     // constants
     PRODUCTION_DB_NAME = 'onegoodturn'
@@ -215,6 +217,75 @@ function DAO(options) {
         });
     };
 
+    /*
+     * update/insert the user's votes on the given posts, and returns a list of promises for votes
+     * postIdsToOpinions is expected to be a regular JSON object (map).
+     */
+    self.upsertVotes = function(userId, postIdsToOpinions) {
+        var deferred = Q.defer();
+
+        Q.all(self.findVotesByUserIdAndPostIds(userId, _.keys(postIdsToOpinions)))
+        .then(
+            function(votes) {
+                console.log('got votes: ' + JSON.stringify(votes));
+
+                // have to check for nulls
+                var voteLookup = _.object(_.map(votes, function(vote){
+                    return [vote.postId, vote];
+                }));
+
+                console.log('vote lookup is ' + JSON.stringify(voteLookup));
+
+                var votesToSave = _.keys(postIdsToOpinions).map(function(postId){
+                    var existing = voteLookup[postId];
+                    if (existing) {
+                        existing.opinion = postIdsToOpinions[postId];
+                        return existing;
+                    } else { // create new
+                        return new Vote(postIdsToOpinions[postId], userId, postId);
+                    }
+                });
+
+                Q.nfcall(db.bulk, {docs : votesToSave}, {all_or_nothing : false}).then(function(body){
+                    console.log('body is ' + JSON.stringify(body));
+                    var savedVotes = _.map(votesToSave, function(vote, idx){
+                        return _.extend(vote,body[0][idx]); // ads in _id and _rev values
+                    });
+                    deferred.resolve(savedVotes);
+                }, function(err){
+                    deferred.reject(err);
+                });
+            }, function(err) {
+                deferred.reject(err);
+            });
+        return deferred.promise;
+    };
+
+    /*
+     * update/insert a user's vote on a post, and return a promise for a vote
+     */
+    self.upsertVote = function(opinion, userId, postId) {
+        var deferred = Q.defer();
+        self.findVoteByUserIdAndPostId(userId, postId).then(
+            function(vote) {
+                // already exists, so overwrite
+                vote.opinion = opinion;
+                self.save(vote).then(function(vote){
+                    deferred.resolve(vote);
+                }, function(err){
+                    deferred.reject(err);
+                });
+            }, function() {
+                // doesn't exist yet, so create new
+                self.save(new Vote("neutral", userId, postId)).then(function(vote){
+                    deferred.resolve(vote);
+                }, function(err){
+                    deferred.reject(err);
+                });
+
+            });
+        return deferred.promise;
+    };
 
     /*
      * returns a promise for the object body
@@ -275,11 +346,11 @@ function DAO(options) {
 
         if (postId instanceof Array) {
             // check multiple ids
-            return queryViewAndPromise('post_details', {keys : postId, reduce : true, group : true},
+            return queryViewAndPromise('post_details_v2', {keys : postId, reduce : true, group : true},
                 true, true, defaultValue);
         } else {
             // check single id
-            return queryViewAndPromise('post_details', {key : postId, reduce : true, group : true},
+            return queryViewAndPromise('post_details_v2', {key : postId, reduce : true, group : true},
                 false, true, defaultValue);
         }
     };

@@ -8,7 +8,7 @@
 module.exports = [{
     name: 'num_upvotes_by_post',
     map : function(doc) {
-        if (doc.type === 'vote' && doc.positive) {
+        if (doc.type === 'vote' && doc.opinion === "pos") {
             emit(doc.postId, 1);
         }
     },
@@ -18,7 +18,7 @@ module.exports = [{
 }, {
     name: 'num_downvotes_by_post',
     map: function(doc) {
-        if (doc.type === 'vote' && !doc.positive) {
+        if (doc.type === 'vote' && doc.opinion === "neg") {
             emit(doc.postId, 1);
         }
     },
@@ -47,12 +47,12 @@ module.exports = [{
         }
     }
 }, {
-    name : 'post_details',
+    name : 'post_details_v2',
     map : function(doc) {
         if (doc.type === 'vote' && doc.postId) {
             emit(doc.postId, {
-                posCount : (doc.positive ? 1 : 0),
-                negCount : (doc.positive ? 0 : 1)
+                posCount : (doc.opinion === "pos" ? 1 : 0),
+                negCount : (doc.opinion === "neg" ? 1 : 0)
             });
         }
     },
