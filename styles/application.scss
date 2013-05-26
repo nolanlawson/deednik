@@ -172,9 +172,10 @@ span.muted.error {
 /* area with the thumbs up/down and the counter */
 
 .thumb-and-count {
-    text-align : right;
-    display    : inline-block;
-    min-width  : 50px;
+    text-align  : right;
+    display     : inline-block;
+    min-width   : 50px;
+    margin-left : 20px;
 
     .thumb {
         display : inline-block;
@@ -201,8 +202,8 @@ span.muted.error {
 
     span {
         text-align : right;
-        margin-left: 6px;
+        margin-left: 1px;
         float : right;
-        min-width: 40px;
+        min-width: 20px;
     }
 }
