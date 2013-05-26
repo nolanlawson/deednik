@@ -67,7 +67,12 @@ module.exports = function(grunt) {
                         dest: 'build/images',
                         filter: 'isFile',
                         flatten: true
-                    }
+                    },
+                    {   expand : true,
+                        src : ['**/*'],
+                        cwd: 'styles/lib/',
+                        dest : 'build/css/lib',
+                        flatten : false}
                 ]
             }
         },
