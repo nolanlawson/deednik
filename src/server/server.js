@@ -52,7 +52,7 @@ function getUserIpAddress(req) {
     console.log('req.connection is ' + JSON.stringify(_.keys(req.connection)));
     console.log('req.headers is ' + JSON.stringify(_.keys(req.headers)));
     return PRODUCTION ?
-        (req.headers['X-Forwarded-For'] || req.connection.remoteAddress) :
+        (req.headers['x-forwarded-for'] || req.connection.remoteAddress) :
         req.headers['user-agent']; // every browser is its own user
 }
 
