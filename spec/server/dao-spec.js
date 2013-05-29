@@ -196,7 +196,7 @@ describe("DAO test suite", function() {
         });
 
         waitsFor(function(){
-            return user.deleted;
+            return user.deleted && post.deleted && vote.deleted;
         });
 
         var doneCount = 0;
