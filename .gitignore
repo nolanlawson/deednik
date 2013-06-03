@@ -19,3 +19,4 @@ build
 .idea
 .grunt
 _SpecRunner.html
+.sass-cache

@@ -1,61 +1,8 @@
-/* colors */
-$bg              : #dfdfdf;
-$border          : #333;
-$logoBg          : #d64242;
-$textBorderColor : #f0f0f0;
-$bodyBg          : #fff;
-$warning         : #c09853;
-$error           : #b94a48;
-$info            : #3a87ad;
+@import "constants";
+@import "mixins";
+@import "media";
+@import "animations";
 
-/* dimensions */
-$textBorderWidth : 2px;
-
-$largeDesktopBreak : 1200px;
-$midDesktopBreak   : 980px;
-$desktopBreak      : 768px;
-$tabletBreak       : 481px;
-
-/* time */
-$fadeTime : 0.4s;
-
-/* media queries */
-
-/*large desktop size */
-$largeDesktop   : "(min-width: #{$largeDesktopBreak})";
-/* Portrait tablet to landscape and desktop */
-$desktop        : "(min-width: #{$desktopBreak}) and (max-width: #{$largeDesktopBreak - 1})";
-/* Landscape phone to portrait tablet */
-$tablet         : "(min-width : #{$tabletBreak}) and (max-width: #{$desktopBreak - 1})";
-/* Landscape phones and down */
-$phone          : "(max-width : #{$tabletBreak})";
-
-/* something special for twitter bootstrap, apparently it breaks on this size for certain things */
-$subMidDesktop : "(max-width : #{$midDesktopBreak - 1})";
-$midDesktop    : "(min-width : #{$midDesktopBreak})";
-
-
-/* mixins */
-
-@mixin rounded-corners($rad) {
-    -webkit-border-radius: $rad;
-    -moz-border-radius: $rad;
-    -khtml-border-radius: $rad;
-    border-radius: $rad;
-}
-
-@mixin main-logo($radius) {
-    @include rounded-corners($radius);
-
-    font-family: 'Chela One', cursive;
-    background : $logoBg;
-    padding : 0.1em 0.5em;
-    font-weight : normal;
-}
-
-@mixin text-border($color, $width) {
-    text-shadow: (-1 * $width) 0 $color, 0 $width $color, $width 0 $color, 0 (-1 * $width) $color;
-}
 
 /* css */
 
@@ -160,27 +107,6 @@ h3 {
 }
 .align-right {
     text-align : right;
-}
-
-/* fade in and out animation */
-
-.fadeIn-setup,.fadeOut-setup {
-    -webkit-transition: $fadeTime linear opacity;
-    -moz-transition: $fadeTime linear opacity;
-    -o-transition: $fadeTime linear opacity;
-    transition: $fadeTime linear opacity;
-}
-.fadeIn-setup{
-    opacity:0;
-}
-.fadeOut-setup{
-    opacity:1;
-}
-.fadeIn-setup.fadeIn-start {
-    opacity: 1;
-}
-.fadeOut-setup.fadeOut-start{
-    opacity:0;
 }
 
 .postControls {

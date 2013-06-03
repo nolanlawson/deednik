@@ -1,0 +1,25 @@
+@import "constants";
+@import "mixins";
+
+/* fade in and out animation */
+
+.fadeIn,.fadeOut {
+    @include transition($fadeTime linear opacity);
+}
+
+.fadeIn {
+    opacity:0;
+
+    &.fadeIn-active {
+        opacity: 1;
+    }
+
+}
+
+.fadeOut {
+    opacity:1;
+
+    &.fadeOut-active{
+        opacity:0;
+    }
+}

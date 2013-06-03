@@ -94,15 +94,17 @@ module.exports = function(grunt) {
         // run client-side jasmine tests
         jasmine: {
             unminified : {
-                src : ['src/client/lib/**/jquery*.js', 'src/client/lib/**/*.js', 'src/client/application.js',
-                    'src/client/**/*.js'],
+                // explicitly use angular 1.1.3 for testing due to a bug in Angular 1.1.4+
+                src : ['src/client/lib/**/jquery*.js', 'src/client/lib/**/angular-1.1.3.min.js', 'src/client/application.js',
+                    'src/client/**/*.js', '!**/*/angular-1.1.5.min.js'],
                 options: {
                     specs : 'spec/client/**/*-spec.js'
                 }
             },
 
             minified : {
-                src : ['build/js/lib/**/jquery*.js', 'build/js/lib/**/*.js', 'build/js/application-concat.min.js'],
+                src : ['src/client/lib/**/jquery*.js', 'src/client/lib/**/angular-1.1.3.min.js', 'src/client/application.js',
+                    'src/client/**/*.js', '!**/*/angular-1.1.5.min.js'],
                 options: {
                     specs : 'spec/client/**/*-spec.js'
                 }

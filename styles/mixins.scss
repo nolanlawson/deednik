@@ -1,0 +1,31 @@
+@import "constants";
+
+/* mixins */
+
+@mixin rounded-corners($rad) {
+    -webkit-border-radius: $rad;
+    -moz-border-radius: $rad;
+    -khtml-border-radius: $rad;
+    border-radius: $rad;
+}
+
+@mixin transition($trans) {
+    -ms-transition : $trans;
+    -webkit-transition: $trans;
+    -moz-transition: $trans;
+    -o-transition: $trans;
+    transition: $trans;
+}
+
+@mixin main-logo($radius) {
+    @include rounded-corners($radius);
+
+    font-family: 'Chela One', cursive;
+    background : $logoBg;
+    padding : 0.1em 0.5em;
+    font-weight : normal;
+}
+
+@mixin text-border($color, $width) {
+    text-shadow: (-1 * $width) 0 $color, 0 $width $color, $width 0 $color, 0 (-1 * $width) $color;
+}

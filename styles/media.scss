@@ -1,0 +1,16 @@
+@import "constants";
+
+/* media queries */
+
+/*large desktop size */
+$largeDesktop   : "(min-width: #{$largeDesktopBreak})";
+/* Portrait tablet to landscape and desktop */
+$desktop        : "(min-width: #{$desktopBreak}) and (max-width: #{$largeDesktopBreak - 1})";
+/* Landscape phone to portrait tablet */
+$tablet         : "(min-width : #{$tabletBreak}) and (max-width: #{$desktopBreak - 1})";
+/* Landscape phones and down */
+$phone          : "(max-width : #{$tabletBreak})";
+
+/* something special for twitter bootstrap, apparently it breaks on this size for certain things */
+$subMidDesktop : "(max-width : #{$midDesktopBreak - 1})";
+$midDesktop    : "(min-width : #{$midDesktopBreak})";
