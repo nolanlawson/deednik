@@ -4,7 +4,7 @@
 
 "use strict";
 
-angular.module('one-good-turn', []).
+angular.module('deednik', []).
 constant('constants', {
     // max post size
     MAX_CONTENT_LENGTH : 1024,

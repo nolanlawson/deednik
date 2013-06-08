@@ -83,4 +83,4 @@ UserVotes.prototype.toggleOpinion = function(post, opinion) {
     this.updateOpinion(post, oldOpinion === opinion ? 'neutral' : opinion);
 };
 
-angular.module('one-good-turn').service('userVotes', ['restServer', UserVotes]);
+angular.module('deednik').service('userVotes', ['restServer', UserVotes]);

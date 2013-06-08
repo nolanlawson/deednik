@@ -9,7 +9,7 @@ describe("UserVotesService", function(){
         return {_id : postId};
     }
 
-    beforeEach(module('one-good-turn'));
+    beforeEach(module('deednik'));
 
     beforeEach(inject(function($injector) {
 

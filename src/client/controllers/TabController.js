@@ -4,7 +4,7 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('TabController', [ '$scope', '$location',
+angular.module('deednik').controller('TabController', [ '$scope', '$location',
         function($scope, $location){
     
     function Tab(id, title) {

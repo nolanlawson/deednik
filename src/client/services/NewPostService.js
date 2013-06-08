@@ -10,4 +10,4 @@ NewPost.prototype.getLength = function() {
     return this.content ? this.content.length : 0;
 };
 
-angular.module('one-good-turn').service('newPost', [NewPost]);
+angular.module('deednik').service('newPost', [NewPost]);

@@ -4,7 +4,7 @@
 
 "use strict";
 
-angular.module('one-good-turn').factory('restServer', ['$http', function ($http) {
+angular.module('deednik').factory('restServer', ['$http', function ($http) {
 
     return {
         findUserVotes : function() {

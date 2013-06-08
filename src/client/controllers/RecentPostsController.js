@@ -5,7 +5,7 @@
 
 "use strict";
 
-angular.module('one-good-turn').controller('RecentPostsController',
+angular.module('deednik').controller('RecentPostsController',
     ['$rootScope', '$scope', 'socket', 'restServer', 'recentPosts', 'userVotes',
             function($rootScope, $scope, socket, restServer, recentPosts, userVotes){
 

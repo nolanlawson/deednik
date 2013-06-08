@@ -33,5 +33,5 @@ RecentPosts.prototype.addToBack = function(post) {
         this.list.push(post);
     }
 };
-angular.module('one-good-turn').service('recentPosts', ['restServer', RecentPosts]);
+angular.module('deednik').service('recentPosts', ['restServer', RecentPosts]);
 

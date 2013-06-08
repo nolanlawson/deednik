@@ -7,7 +7,7 @@ describe("restServer", function(){
     var _$httpBackend;
     var _restServer;
 
-    beforeEach(module('one-good-turn'));
+    beforeEach(module('deednik'));
 
     beforeEach(inject(function($injector, restServer) {
 

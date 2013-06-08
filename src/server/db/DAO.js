@@ -14,7 +14,7 @@ var
     User  = require('../model/User.js'),
 
     // constants
-    PRODUCTION_DB_NAME = 'onegoodturn'
+    PRODUCTION_DB_NAME = 'deednik'
     ;
 
 function DAO(options) {

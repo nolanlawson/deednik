@@ -5,7 +5,7 @@
 
 "use strict";
 
-angular.module('one-good-turn').factory('socket', ['$rootScope', function ($rootScope) {
+angular.module('deednik').factory('socket', ['$rootScope', function ($rootScope) {
   var socket = io.connect();
   return {
     on: function (eventName, callback) {
