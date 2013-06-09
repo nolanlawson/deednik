@@ -7,7 +7,6 @@
     "noarg": true,
     "noempty": true,
     "nonew": true,
-    "undef": true,
     "strict": true,
     "node": true,
     "globals": {
