@@ -24,6 +24,7 @@
 		"grunt-contrib-copy"     : "*",
                 "grunt-contrib-clean"    : "*",
                 "passport"               : "*",
+		"passport-local"         : "*",
 		"jasmine-node"           : "*",
 		"uglify-js"              : "*",
 		"socket.io"              : "*"
