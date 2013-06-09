@@ -4,9 +4,16 @@
 
 var _ = require('underscore');
 
-function User(userGuid) {
+function User(userDef) {
     this.type = "user";
-    this.userGuid = userGuid;
+
+    if (typeof userGuid === "string") {
+        this.userGuid = userDef; // simple string userguid
+    } else { // map
+        this.userGuid = userDef.userGuid;
+        this.digest = userDef.digest;
+        this.salt = userDef.salt;
+    }
 }
 
 function toHash(obj) {

@@ -1,6 +1,4 @@
 /* Main server definition for 1 Good Turn. */
-(function(){
-
 "use strict";
 
 var
@@ -12,6 +10,9 @@ var
         server           = require('http').createServer(app),
         path             = require('path'),
         _                = require('underscore'),
+        crypto           = require('crypto'),
+        passport         = require('passport'),
+        LocalStrategy    = require('passport-local').Strategy,
 
         // constants
 
@@ -26,19 +27,45 @@ var
         SocketServer = require('./sockets/SocketServer.js'),
         ViewHandler  = require('./views/ViewHandler.js'),
         Post         = require('./model/Post.js'),
-        Functions    = require('./util/Functions.js')
+        Functions    = require('./util/Functions.js'),
+        auth         = require('./routes/auth.js')(app, passport)
         ;
 
 
 app.use("/css", express['static'](path.join(__dirname, '../../build/css')));
 app.use("/images", express['static'](path.join(__dirname, '../../images')));
 app.use("/js", express['static'](path.join(__dirname, '../../build/js')));
+app.use(express.cookieParser());
 app.use(express.bodyParser());
+app.use(express.session({secret : 'does-not-matter-if-we-use-ssl'}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(expressValidator);
 
 
 var dao = new DAO({production : true});
 dao.init();
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+
+        dao.findUserByUserGuid(username).then(function(user){
+
+            var hash = crypto.createHash('sha512');
+            hash.update(password + user.salt);
+            var digest = hash.digest('base64');
+            if (digest === user.digest) {
+                return done(null, false, { message : "Incorrect password."});
+            }
+
+            return done(null, user);
+
+
+        }, function(err){
+            return done(null, false, { message : "Incorrect username."});
+        }).done();
+    }
+));
 
 var socketServer = new SocketServer();
 socketServer.init(server);
@@ -110,6 +137,47 @@ app.get('/jsapi-v1/findUserVotes', function(req, res){
         },function(err){
             res.json({error : err});
         }).done();
+});
+
+app.post('/jsapi-v1/signup', function(req, res){
+
+    req.assert('username', 'Invalid username').notEmpty();
+    req.assert('password', 'Invalid password').notEmpty();
+
+    if (req.validationErrors()) {
+        return res.json({error : req.validationErrors(true)});
+    }
+
+    var username = req.param('username');
+    var password = req.param('password');
+    var salt = crypto.randomBytes(32).toString('base64');
+    var hash = crypto.createHash('sha512');
+    hash.update(password + salt);
+    var digest = hash.digest('base64');
+
+    dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest}).then(
+        function(user) {
+            req.login(user, function(err) {
+                if (err) {
+                    return res.redirect('/loginError/');
+                }
+                return res.redirect('/loginSuccess/');
+            });
+        }
+    ).done();
+});
+
+app.post('/jsapi-v1/login', function(req, res){
+    passport.authenticate('local', {successRedirect : '/jsapi-v1/loginSuccess',
+    failureRedirect : '/jsapi-v1/loginError'});
+});
+
+app.get('/jsapi-v1/loginError', function(req, res){
+    res.json({error : true});
+});
+
+app.get('/jsapi-v1/loginSuccess', function(req, res){
+    res.json({success : true});
 });
 
 app.post('/jsapi-v1/postUserVotes', function(req, res){
@@ -209,4 +277,3 @@ app.get('/jsapi-v1/findPostsByTimestampBefore', function(req, res){
 server.listen(PORT);
 console.log('Listening on port ' + PORT + ' in ' + (PRODUCTION ? 'production' : 'development') + ' mode.');
 
-})();

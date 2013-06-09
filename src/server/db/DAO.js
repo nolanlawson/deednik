@@ -6,7 +6,7 @@
 
 var
     // imports
-    nano  = require('nano')('http://localhost:5984'),
+    nano  = require('nano')(process.env.COUCHDB_PATH || 'http://localhost:5984'),
     Q     = require('q'),
     _     = require('underscore'),
     views = require('./Views.js'),
@@ -290,7 +290,8 @@ function DAO(options) {
     /*
      * fetch/insert a user based on their userGuid, and return a promise for a user
      */
-    self.upsertUser = function(userGuid) {
+    self.upsertUser = function(userGuid, userDef) {
+
         var deferred = Q.defer();
         self.findUserByUserGuid(userGuid).then(
             function(user) {
@@ -298,7 +299,7 @@ function DAO(options) {
                 deferred.resolve(user);
             }, function() {
                 // doesn't exist yet, so create new
-                self.save(new User(userGuid)).then(function(user){
+                self.save(new User(userDef || userGuid)).then(function(user){
                     deferred.resolve(user);
                 }, function(err){
                     deferred.reject(err);
