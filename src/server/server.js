@@ -51,9 +51,7 @@ passport.use(new LocalStrategy(
 
         dao.findUserByUserGuid(username).then(function(user){
 
-            var hash = crypto.createHash('sha512');
-            hash.update(password + user.salt);
-            var digest = hash.digest('base64');
+            var digest = encrypt(password, user.salt);
             if (digest === user.digest) {
                 return done(null, false, { message : "Incorrect password."});
             }
@@ -81,6 +79,12 @@ function getUserIpAddress(req) {
     return PRODUCTION ?
         (req.headers['x-forwarded-for'] || req.connection.remoteAddress) :
         req.headers['user-agent']; // every browser is its own user
+}
+
+function encrypt(password, salt) {
+    var hash = crypto.createHash('sha512');
+    hash.update(password + salt);
+    return hash.digest('base64');
 }
 
 app.post('/jsapi-v1/insertPost', function(req, res){
@@ -151,9 +155,7 @@ app.post('/jsapi-v1/signup', function(req, res){
     var username = req.param('username');
     var password = req.param('password');
     var salt = crypto.randomBytes(32).toString('base64');
-    var hash = crypto.createHash('sha512');
-    hash.update(password + salt);
-    var digest = hash.digest('base64');
+    var digest = encrypt(password, salt);
 
     dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest}).then(
         function(user) {
@@ -161,10 +163,16 @@ app.post('/jsapi-v1/signup', function(req, res){
                 if (err) {
                     return res.redirect('/loginError/');
                 }
+                req.login();
                 return res.redirect('/loginSuccess/');
             });
         }
     ).done();
+});
+
+app.post('/jsapi-v1/logout', function(req, res){
+    req.logout();
+    res.json({success : true});
 });
 
 app.post('/jsapi-v1/login', function(req, res){
