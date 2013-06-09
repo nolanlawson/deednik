@@ -7,7 +7,7 @@ var _ = require('underscore');
 function User(userDef) {
     this.type = "user";
 
-    if (typeof userGuid === "string") {
+    if (typeof userDef === "string") {
         this.userGuid = userDef; // simple string userguid
     } else { // map
         this.userGuid = userDef.userGuid;
