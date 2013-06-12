@@ -3,10 +3,8 @@
 
 "use strict";
 
-function UserVotes(restServer) {
+function UserVotes(restServer, constants) {
     var self = this;
-
-    var CHECK_INTERVAL = 2000;
 
     self.votes = {};
     self.dirtyVotes = {};
@@ -25,6 +23,7 @@ function UserVotes(restServer) {
 
     // periodically sync back to the server
     setInterval(function() {
+        console.info("checking, postInProgress is " + self.postInProgress + ", number of keys is " + _.keys(self.dirtyVotes).length);
         if (!self.postInProgress && _.keys(self.dirtyVotes).length > 0) {
             self.postInProgress = true;
             restServer.postUserVotes(self.dirtyVotes)
@@ -40,7 +39,7 @@ function UserVotes(restServer) {
                 });
 
         }
-    }, CHECK_INTERVAL);
+    }, constants.CHECK_INTERVAL);
 }
 
 UserVotes.prototype.getOpinion = function(postOrPostId) {
@@ -83,4 +82,4 @@ UserVotes.prototype.toggleOpinion = function(post, opinion) {
     this.updateOpinion(post, oldOpinion === opinion ? 'neutral' : opinion);
 };
 
-angular.module('deednik').service('userVotes', ['restServer', UserVotes]);
+angular.module('deednik').service('userVotes', ['restServer', 'constants', UserVotes]);

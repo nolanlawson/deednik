@@ -19,7 +19,8 @@ constant('constants', {
             "Cooked up a mean taco soup for a soup kitchen",
             "Volunteered after school for my kid's PTA",
             "Gave a quarter to a dude who needed bus money"
-    ]
+    ],
+    CHECK_INTERVAL : 5000
 }).
 config(['$routeProvider', function($routeProvider) {
     $routeProvider.

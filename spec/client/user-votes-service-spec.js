@@ -26,6 +26,10 @@ describe("UserVotesService", function(){
         );
 
         _$httpBackend.when('POST', '/jsapi-v1/postUserVotes').respond({success : true});
+
+        // I don't wanna wait 5 seconds in my unit tests
+        var _constants = $injector.get('constants');
+        _constants.CHECK_INTERVAL = 50;
     }));
 
     beforeEach(inject(function(userVotes){
@@ -91,6 +95,10 @@ describe("UserVotesService", function(){
             _userVotesService.updateOpinion(fakePost('foo'), 'pos');
         });
 
+        waitsFor(function(){
+            return _.keys(_userVotesService.dirtyVotes).length === 3;
+        }, 'dirtyVotes never filled', 5000);
+
         runs(function(){
             expect( _userVotesService.getOpinion(fakePost('foo'))).toEqual("pos");
             expect( _userVotesService.getOpinion(fakePost('baz'))).toEqual("neg");
@@ -100,7 +108,9 @@ describe("UserVotesService", function(){
             expect( _userVotesService.getOpinion(fakePost('hehe'))).toEqual("neg");
         });
 
-        waits(5000);
+        waitsFor(function(){
+            return _userVotesService.postInProgress;
+        }, 'userVotesService never started posting (#2)', 10000);
 
         runs(function(){
             _$httpBackend.flush();
