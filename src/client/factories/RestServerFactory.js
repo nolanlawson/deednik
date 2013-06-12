@@ -44,7 +44,34 @@ angular.module('deednik').factory('restServer', ['$http', function ($http) {
                 url: url,
                 data: {postContent : postContent}
             });
+        },
+
+        signupOrLogin : function(username, password, login) {
+            var url = '/jsapi-v1/signupOrLogin';
+            return $http({
+                method : 'POST',
+                url : url,
+                data : {username : username, password : password, login : login}
+            });
+        },
+
+        session : function() {
+            var url = '/jsapi-v1/session';
+            return $http({
+                method : 'GET',
+                url : url
+            });
+        },
+
+        logout : function(username, password) {
+            var url = '/jsapi-v1/logout';
+            return $http({
+                method : 'GET',
+                url : url
+            });
         }
+
+
     };
 
 }]);

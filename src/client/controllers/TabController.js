@@ -6,7 +6,7 @@
 
 angular.module('deednik').controller('TabController', [ '$scope', '$location',
         function($scope, $location){
-    
+
     function Tab(id, title) {
         this.id = id;
         this.title = title;

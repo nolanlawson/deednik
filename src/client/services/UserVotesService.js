@@ -23,7 +23,6 @@ function UserVotes(restServer, constants) {
 
     // periodically sync back to the server
     setInterval(function() {
-        console.info("checking, postInProgress is " + self.postInProgress + ", number of keys is " + _.keys(self.dirtyVotes).length);
         if (!self.postInProgress && _.keys(self.dirtyVotes).length > 0) {
             self.postInProgress = true;
             restServer.postUserVotes(self.dirtyVotes)

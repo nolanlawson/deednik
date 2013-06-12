@@ -52,18 +52,26 @@ passport.use(new LocalStrategy(
         dao.findUserByUserGuid(username).then(function(user){
 
             var digest = encrypt(password, user.salt);
-            if (digest === user.digest) {
+
+            if (digest !== user.digest) {
                 return done(null, false, { message : "Incorrect password."});
             }
 
             return done(null, user);
-
 
         }, function(err){
             return done(null, false, { message : "Incorrect username."});
         }).done();
     }
 ));
+
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
+});
+
+passport.deserializeUser(function(id, done) {
+    dao.findById(id).then(function(user){done(null, user);}, function(err){done(err);}).done();
+});
 
 var socketServer = new SocketServer();
 socketServer.init(server);
@@ -129,6 +137,7 @@ app.post('/jsapi-v1/insertPost', function(req, res){
             console.log('serious error while posting: ' + err);
         }).done();
 });
+
 app.get('/jsapi-v1/findUserVotes', function(req, res){
     console.log('/jsapi-v1/findUserVotes from ' + req.connection.remoteAddress);
 
@@ -143,10 +152,31 @@ app.get('/jsapi-v1/findUserVotes', function(req, res){
         }).done();
 });
 
-app.post('/jsapi-v1/signup', function(req, res){
 
-    req.assert('username', 'Invalid username').notEmpty();
-    req.assert('password', 'Invalid password').notEmpty();
+app.get('/jsapi-v1/logout', function(req, res){
+
+    console.log("use wants to log out: " + (req.user && req.user.userGuid));
+
+    if (req.user) {
+        req.logout();
+        res.json({success : true});
+    } else{
+        return res.json({error : true});
+    }
+});
+
+app.get('/jsapi-v1/session', function(req, res){
+    console.log("found user: " + (req.user && req.user.userGuid));
+
+    res.json({'session' : (req.user && true)});
+});
+
+app.post('/jsapi-v1/signupOrLogin', function(req, res, next){
+
+    req.assert('username', 'Invalid username').notEmpty().isEmail();
+    req.assert('password', 'Invalid password').notEmpty().isAlphanumeric();
+    req.assert('login', 'Invalid login').notNull();
+    req.sanitize('login').toBoolean();
 
     if (req.validationErrors()) {
         return res.json({error : req.validationErrors(true)});
@@ -154,38 +184,51 @@ app.post('/jsapi-v1/signup', function(req, res){
 
     var username = req.param('username');
     var password = req.param('password');
-    var salt = crypto.randomBytes(32).toString('base64');
-    var digest = encrypt(password, salt);
+    var login = req.param('login');
 
-    dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest}).then(
-        function(user) {
-            req.login(user, function(err) {
+    if (login) {
+        passport.authenticate('local', function(err, user, info) {
+            if (err) {
+                console.log('got error: ' + err);
+                return res.json({error : true, info : info});
+            }
+            console.log('got user: ' + user);
+            req.login(user, function(err){
                 if (err) {
-                    return res.redirect('/loginError/');
+                    console.log('got login error: ' + err);
+                    return res.json({error : true});
                 }
-                req.login();
-                return res.redirect('/loginSuccess/');
+                return res.json({success : true});
             });
-        }
-    ).done();
-});
 
-app.post('/jsapi-v1/logout', function(req, res){
-    req.logout();
-    res.json({success : true});
-});
+        })(req, res, next);
+    } else { // signup
+        var salt = crypto.randomBytes(32).toString('base64');
+        var digest = encrypt(password, salt);
 
-app.post('/jsapi-v1/login', function(req, res){
-    passport.authenticate('local', {successRedirect : '/jsapi-v1/loginSuccess',
-    failureRedirect : '/jsapi-v1/loginError'});
-});
+        console.log('digest is ' + digest);
 
-app.get('/jsapi-v1/loginError', function(req, res){
-    res.json({error : true});
-});
+        dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest}).then(
+            function(user) {
+                console.log('got user: ' + user);
+                req.login(user, function(err) {
+                    if (err) {
+                        console.log('got signup error: ' + err);
+                        return res.json({error : true});
+                    }
+                    req.login(user, function(err){
+                        if (err) {
+                            console.log('got signup error: ' + err);
+                            return res.json({error : true});
+                        }
+                        return res.json({success : true});
+                    });
 
-app.get('/jsapi-v1/loginSuccess', function(req, res){
-    res.json({success : true});
+                });
+            }
+        ).done();
+    }
+
 });
 
 app.post('/jsapi-v1/postUserVotes', function(req, res){

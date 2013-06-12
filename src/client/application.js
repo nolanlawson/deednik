@@ -20,7 +20,8 @@ constant('constants', {
             "Volunteered after school for my kid's PTA",
             "Gave a quarter to a dude who needed bus money"
     ],
-    CHECK_INTERVAL : 5000
+    CHECK_INTERVAL : 5000,
+    SESSION_CHECK_INTERVAL : 60000
 }).
 config(['$routeProvider', function($routeProvider) {
     $routeProvider.
