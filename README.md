@@ -1,7 +1,5 @@
-One Good Turn
+Deednik
 =========================
-
-Current version : 0.0.01
 
 Developer
 -----------
@@ -48,7 +46,24 @@ to start the server on localhost:3000.
 Developer workflow
 -----------------
 
-In one shell, run
+There are two environment variables you need to set:
+
+* ```NODE_ENV``` defaults to ```production```, but may be set to ```development``` to enable pretty-printing and disable uglification.
+* ```COUCHDB_PATH``` defaults to ```http://localhost:5984```, but this may not work if your CouchDB isn't an Admin Party.
+
+### Running the app
+
+In one shell, run:
+
+```
+NODE_ENV=development COUCHDB_PATH=http://username:password@localhost:5984 supervisor src/server/server.js
+```
+
+to watch for changes and redeploy on localhost:3000.
+
+### Running unit tests, lint, minify, etc.
+
+In another shell, run
 
 ```
 COUCHDB_PATH=http://username:password@localhost:5984 grunt
@@ -56,13 +71,7 @@ COUCHDB_PATH=http://username:password@localhost:5984 grunt
 
 to watch for changes and automatically lint, minify, run server unit tests, run client unit tests, and build.
 
-In another shell, run
-
-```
-NODE_ENV=development COUCHDB_PATH=http://username:password@localhost:5984 supervisor src/server/server.js
-```
-
-to watch for changes and redeploy on localhost:3000.
+### E2E tests with Karma
 
 In another shell, run
 
@@ -72,7 +81,7 @@ grunt karma:continuous
 
 to launch Chrome (default browser) and run e2e tests.
 
-To run it purely from the command line with PhantomJS, you can do:
+Or, if you prefer to run the e2e tests purely from the command line (with PhantomJS), you can do:
 
 ```
 grunt karma:dev
