@@ -11,7 +11,7 @@ angular.module('deednik').controller('SignupLoginButtonController', ['$scope', '
                     .success(function(){
                         // doesn't matter whether data says success or error; user can be considered logged out
                         // if the server responded
-                        session.loggedIn = false;
+                        session.logout();
                     })
                     .error(function(err){
                         console.log("error: " + err);

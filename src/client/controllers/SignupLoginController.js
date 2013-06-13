@@ -5,10 +5,10 @@
 "use strict";
 
 angular.module('deednik').controller('SignupLoginController', ['$scope', 'restServer', 'session', 'sharedConstants',
-            function($scope, restServer, session, sharedConstants){
+            function($scope, restServer, session, sharedConstants) {
 
-    $scope.alreadyHaveAccount = false; // default to false for now
-    $scope.username = "";
+    $scope.alreadyHaveAccount = (session.lastUsername && true);
+    $scope.username = session.lastUsername || "";
     $scope.password = "";
     $scope.confirmPassword = "";
     $scope.session = session;
@@ -49,12 +49,11 @@ angular.module('deednik').controller('SignupLoginController', ['$scope', 'restSe
             .success(function(data){
                 if (data && data.success) {
                     $scope.signinWarning = false;
-                    session.loggedIn = true;
-                    session.username = data.username;
+                    session.login(data.username);
                     jQuery('#signup-login-modal').modal('hide'); // TODO: move this to directive
                 } else {
                     $scope.signinWarning = true;
-                    $scope.lastSigninError = (data && data.error);
+                    $scope.lastSigninError = getErrorText(data);
                 }
                 $scope.submitting = false;
             })
@@ -63,6 +62,26 @@ angular.module('deednik').controller('SignupLoginController', ['$scope', 'restSe
                 $scope.submitting = false;
             });
     };
+
+    function getErrorText(data) {
+
+        if (data && data.error) {
+
+            if (_.isString(data.error)) {
+                // passport error
+                return data.error;
+            } else if (_.isObject(data.error)) {
+                // express validation error
+                var firstKey = _.keys(data.error)[0];
+                if (firstKey && _.contains(_.keys(sharedConstants.ERRORS.PARAMETER), firstKey)) {
+                    return sharedConstants.ERRORS.PARAMETER[firstKey];
+                }
+            }
+
+        }
+
+        return sharedConstants.ERRORS.UNKNOWN;
+    }
 
 
 }]);

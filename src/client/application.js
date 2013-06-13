@@ -4,7 +4,7 @@
 
 "use strict";
 
-angular.module('deednik', []).
+angular.module('deednik', ['ngCookies']).
 constant('constants', {
     // max post size
     MAX_CONTENT_LENGTH : 1024,

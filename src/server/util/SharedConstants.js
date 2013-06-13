@@ -11,6 +11,11 @@ module.exports = {
         },
         SIGNUP : {
             USER_EXISTS : "User already exists."
-        }
+        },
+        PARAMETER : {
+            username : "Invalid email address.",
+            password : "Invalid password."
+        },
+        UNKNOWN : "Unknown error."
     }
 };

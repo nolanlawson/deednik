@@ -27,11 +27,15 @@
         "element" : true,
         "input" : true,
         "sleep" : true,
+        "pause" : true,
+        "binding": true,
         "angular": true,
         "io": true,
         "console": true,
         "_": true,
         "moment": true,
-        "APP_INFO": true
+        "APP_INFO": true,
+        "$" : true,
+        "jQuery" : true
     }
 }

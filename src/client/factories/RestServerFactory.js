@@ -51,7 +51,7 @@ angular.module('deednik').factory('restServer', ['$http', function ($http) {
             return $http({
                 method : 'POST',
                 url : url,
-                data : {username : username, password : password, login : login}
+                data : {username : username, password : password, login : (login ? "true" : "false")}
             });
         },
 
