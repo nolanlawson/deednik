@@ -31,6 +31,19 @@ describe('signup/login behavior', function(){
         expect(element(logoutButton + ':visible').count()).toBe(0);
     }
 
+    function checkIt(input) {
+        if (input.val() !== 'on') {
+            input.check();
+        }
+    }
+
+    function uncheckIt(input) {
+        if (input.val() === 'on') {
+            input.check();
+        }
+    }
+
+
     it('should allow me to create a new user', function(){
 
         // clicking the "login" button pops up the login modal
@@ -46,11 +59,7 @@ describe('signup/login behavior', function(){
         input('username').enter(username);
         input('password').enter('password');
         input('confirmPassword').enter('password');
-
-        // uncheck
-        if (input('alreadyHaveAccount').val() === 'on') {
-            input('alreadyHaveAccount').check();
-        }
+        uncheckIt(input('alreadyHaveAccount'));
 
         element(submit).click();
 
@@ -72,10 +81,7 @@ describe('signup/login behavior', function(){
         input('username').enter(username);
         input('password').enter('password');
 
-        // uncheck
-        if (input('alreadyHaveAccount').val() !== 'on') {
-            input('alreadyHaveAccount').check();
-        }
+        checkIt(input('alreadyHaveAccount'));
 
         element(submit).click();
 
@@ -97,19 +103,39 @@ describe('signup/login behavior', function(){
         input('username').enter(username);
         input('password').enter('badPassword!!');
 
-        // uncheck
-        if (input('alreadyHaveAccount').val() !== 'on') {
-            input('alreadyHaveAccount').check();
-        }
+        checkIt(input('alreadyHaveAccount'));
 
         element(submit).click();
 
         sleep(3);
 
-        expect(element('.alert:visible').count()).toBe(1);
+        expect(element('.alert:visible').count()).not().toBe(0);
         expect(element(modal + ':visible').count()).toBe(1);
         expectLoggedOut();
 
 
+    });
+
+    it('ignores case with email logins', function(){
+        expectLoggedOut();
+        element(loginButton).click();
+        sleep(1);
+
+
+        // cannot re-register with the same username in uppercase
+
+        input('username').enter(username.toUpperCase());
+        input('password').enter('fooled you!');
+        input('confirmPassword').enter('fooled you!');
+
+        checkIt(input('alreadyHaveAccount'));
+
+        element(submit).click();
+
+        sleep(3);
+
+        expect(element('.alert:visible').count()).not().toBe(0);
+        expect(element(modal + ':visible').count()).toBe(1);
+        expectLoggedOut();
     });
 });
