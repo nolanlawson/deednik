@@ -98,7 +98,7 @@ module.exports = function(grunt) {
                 src : ['src/client/lib/**/jquery*.js', 'src/client/lib/**/angular-1.1.3.min.js', 'src/client/application.js',
                     'src/client/**/*.js', '!**/*/angular-1.1.5.min.js'],
                 options: {
-                    specs : 'spec/client/**/*-spec.js'
+                    specs : 'spec/client/unit/**/*-spec.js'
                 }
             },
 
@@ -106,10 +106,17 @@ module.exports = function(grunt) {
                 src : ['src/client/lib/**/jquery*.js', 'src/client/lib/**/angular-1.1.3.min.js', 'src/client/application.js',
                     'src/client/**/*.js', '!**/*/angular-1.1.5.min.js'],
                 options: {
-                    specs : 'spec/client/**/*-spec.js'
+                    specs : 'spec/client/unit/**/*-spec.js'
                 }
             }
         },
+
+        karma: {
+            unit: {
+                configFile: 'karma.conf.js',
+            }
+        },
+
         sass: {
             dist: {
                 options: {
@@ -154,6 +161,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-karma');
 
     // Default task(s).
     grunt.registerTask('build', ['clean', 'copy', 'concat', 'uglify', 'sass']);
