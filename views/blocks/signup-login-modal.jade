@@ -19,7 +19,8 @@
       .alert.alert-warning(ng-show="passwordMatchWarning()")
         | Passwords must match.
       .alert.alert-warning(ng-show="passwordLengthWarning()")
-        | Password must be at least {{constants.MIN_PASSWORD_LENGTH}} characters.
+        | Password must be between {{sharedConstants.MIN_PASSWORD_LENGTH}}
+        | and {{sharedConstants.MAX_PASSWORD_LENGTH}} characters.
       .alert.alert-warning(ng-show="signinWarning")
         | Incorrect username or password.
       .control-group

@@ -4,15 +4,15 @@
 
 "use strict";
 
-angular.module('deednik').controller('SignupLoginController', ['$scope', 'restServer', 'session', 'constants',
-            function($scope, restServer, session, constants){
+angular.module('deednik').controller('SignupLoginController', ['$scope', 'restServer', 'session', 'sharedConstants',
+            function($scope, restServer, session, sharedConstants){
 
     $scope.alreadyHaveAccount = false; // default to false for now
     $scope.username = "";
     $scope.password = "";
     $scope.confirmPassword = "";
     $scope.session = session;
-    $scope.constants = constants;
+    $scope.sharedConstants = sharedConstants;
 
     // warning that the signin failed
     $scope.signinWarning = false;
@@ -25,9 +25,10 @@ angular.module('deednik').controller('SignupLoginController', ['$scope', 'restSe
 
     // warning that the password is too short
     $scope.passwordLengthWarning = function() {
-        return !$scope.passwordMatchWarning() &&
+        return $scope.clickedOnce && !$scope.passwordMatchWarning() &&
             !$scope.alreadyHaveAccount &&
-            (!$scope.password || $scope.password.length < constants.MIN_PASSWORD_LENGTH);
+            (!$scope.password || $scope.password.length < sharedConstants.MIN_PASSWORD_LENGTH ||
+                $scope.password.length > sharedConstants.MAX_PASSWORD_LENGTH);
     };
 
     $scope.$watch('username + password + confirmPassword', function(){
@@ -35,6 +36,8 @@ angular.module('deednik').controller('SignupLoginController', ['$scope', 'restSe
     });
 
     $scope.submit = function() {
+
+        $scope.clickedOnce = true;
 
         if ($scope.passwordMatchWarning() || $scope.passwordLengthWarning()) {
             return;

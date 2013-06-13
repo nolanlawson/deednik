@@ -4,7 +4,8 @@ var
     _                = require('underscore'),
     crypto           = require('crypto'),
     passport         = require('passport'),
-    LocalStrategy    = require('passport-local').Strategy
+    LocalStrategy    = require('passport-local').Strategy,
+    sharedConstants  = require('../util/SharedConstants')
     ;
 
 function encrypt(password, salt) {
@@ -121,7 +122,8 @@ module.exports = function(app, dao) {
     app.post('/jsapi-v1/signupOrLogin', function(req, res, next){
 
         req.assert('username', 'Invalid username').notEmpty().isEmail();
-        req.assert('password', 'Invalid password').notEmpty().isAlphanumeric().len;
+        req.assert('password', 'Invalid password').notEmpty().isAlphanumeric().
+            len(sharedConstants.MIN_PASSWORD_LENGTH, sharedConstants.MAX_PASSWORD_LENGTH);
         req.assert('login', 'Invalid login').notNull();
         req.sanitize('username').trim().toLowerCase();
         req.sanitize('login').toBoolean();
