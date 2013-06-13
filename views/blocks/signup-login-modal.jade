@@ -16,8 +16,10 @@
         required="required") Confirm password
         .controls(ng-hide="alreadyHaveAccount")
           input(ng-model="confirmPassword",type='password', placeholder='Confirm password')
-      .alert.alert-warning(ng-show="passwordWarning()")
+      .alert.alert-warning(ng-show="passwordMatchWarning()")
         | Passwords must match.
+      .alert.alert-warning(ng-show="passwordLengthWarning()")
+        | Password must be at least {{constants.MIN_PASSWORD_LENGTH}} characters.
       .alert.alert-warning(ng-show="signinWarning")
         | Incorrect username or password.
       .control-group

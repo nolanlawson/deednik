@@ -8,12 +8,14 @@ angular.module('deednik').controller('SignupLoginButtonController', ['$scope', '
 
             $scope.logout = function() {
                 restServer.logout()
-                    .success(function(data){
-                        if (data && data.success) {
-                            session.loggedIn = false;
-                        }
+                    .success(function(){
+                        // doesn't matter whether data says success or error; user can be considered logged out
+                        // if the server responded
+                        session.loggedIn = false;
                     })
-                    .error(function(err){console.log("error: " + err);});
+                    .error(function(err){
+                        console.log("error: " + err);
+                    });
             };
 
 }]);

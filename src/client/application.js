@@ -21,7 +21,8 @@ constant('constants', {
             "Gave a quarter to a dude who needed bus money"
     ],
     CHECK_INTERVAL : 5000,
-    SESSION_CHECK_INTERVAL : 60000
+    SESSION_CHECK_INTERVAL : 60000,
+    MIN_PASSWORD_LENGTH : 8
 }).
 config(['$routeProvider', function($routeProvider) {
     $routeProvider.

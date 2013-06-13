@@ -26,6 +26,11 @@ var
         Functions    = require('./util/Functions.js')
         ;
 
+// add "toLowerCase" sanitizer
+expressValidator.Filter.prototype.toLowerCase = function() {
+    this.modify(this.str.toLowerCase());
+    return this.str;
+};
 
 app.use("/css", express['static'](path.join(__dirname, '../../build/css')));
 app.use("/images", express['static'](path.join(__dirname, '../../images')));

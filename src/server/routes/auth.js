@@ -18,7 +18,7 @@ module.exports = function(app, dao) {
     passport.use(new LocalStrategy(
         function(username, password, done) {
 
-            dao.findUserByUserGuid(username).then(function(user){
+            dao.findUserByUserGuid(username.trim().toLowerCase()).then(function(user){
 
                 var digest = encrypt(password, user.salt);
 
@@ -49,7 +49,7 @@ module.exports = function(app, dao) {
 
     app.get('/jsapi-v1/logout', function(req, res){
 
-        console.log("use wants to log out: " + (req.user && req.user.userGuid));
+        console.log("user wants to log out: " + (req.user && req.user.userGuid));
 
         if (req.user) {
             req.logout();
@@ -65,66 +65,75 @@ module.exports = function(app, dao) {
         res.json({success : (req.user && true), username : (req.user && req.user.userGuid)});
     });
 
+    function login(req, res, next) {
+        passport.authenticate('local', function(err, user, info) {
+            if (err) {
+                console.log('got error: ' + err);
+                return res.json({error : true, info : info});
+            }
+            console.log('got user: ' + (user && user.userGuid));
+            req.login(user, function(err){
+                if (err) {
+                    console.log('got login error: ' + err);
+                    return res.json({error : true});
+                }
+                return res.json({success : true, username : user.userGuid});
+            });
+
+        })(req, res, next);
+    }
+
+    function signup(req, res) {
+
+        var username = req.param('username').trim().toLowerCase();
+        var password = req.param('password');
+
+        var salt = crypto.randomBytes(32).toString('base64');
+        var digest = encrypt(password, salt);
+
+        console.log('digest is ' + digest);
+
+        dao.findUserByUserGuid(username)
+            .then(function(){
+                return res.json({error : "user already exists"});
+            }, function() {
+                dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest})
+                    .then(function(user) {
+                        console.log('got user: ' + user);
+                        req.login(user, function(err) {
+                            if (err) {
+                                console.log('got signup error: ' + err);
+                                return res.json({error : true});
+                            }
+                            req.login(user, function(err){
+                                if (err) {
+                                    console.log('got signup error: ' + err);
+                                    return res.json({error : true});
+                                }
+                                return res.json({success : true, username : user.userGuid});
+                            });
+                        });
+
+                    }).done();
+            }).done();
+    }
+
     app.post('/jsapi-v1/signupOrLogin', function(req, res, next){
 
         req.assert('username', 'Invalid username').notEmpty().isEmail();
-        req.assert('password', 'Invalid password').notEmpty().isAlphanumeric();
+        req.assert('password', 'Invalid password').notEmpty().isAlphanumeric().len;
         req.assert('login', 'Invalid login').notNull();
+        req.sanitize('username').trim().toLowerCase();
         req.sanitize('login').toBoolean();
 
         if (req.validationErrors()) {
             return res.json({error : req.validationErrors(true)});
         }
 
-        var username = req.param('username').toLowerCase();
-        var password = req.param('password');
-        var login = req.param('login');
-
-        if (login) {
-            passport.authenticate('local', function(err, user, info) {
-                if (err) {
-                    console.log('got error: ' + err);
-                    return res.json({error : true, info : info});
-                }
-                console.log('got user: ' + user);
-                req.login(user, function(err){
-                    if (err) {
-                        console.log('got login error: ' + err);
-                        return res.json({error : true});
-                    }
-                    return res.json({success : true});
-                });
-
-            })(req, res, next);
+        if (req.param('login')) {
+            login(req, res, next);
         } else { // signup
-            var salt = crypto.randomBytes(32).toString('base64');
-            var digest = encrypt(password, salt);
-
-            console.log('digest is ' + digest);
-
-            dao.findUserByUserGuid(username)
-                .then(function(){
-                    return res.json({error : "user already exists"});
-                }, function() {
-                    dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest})
-                        .then(function(user) {
-                            console.log('got user: ' + user);
-                            req.login(user, function(err) {
-                                if (err) {
-                                    console.log('got signup error: ' + err);
-                                    return res.json({error : true});
-                                }
-                                req.login(user, function(err){
-                                    if (err) {
-                                        console.log('got signup error: ' + err);
-                                        return res.json({error : true});
-                                    }
-                                    return res.json({success : true});
-                                });
-                            });
-
-                        }).done();
-            }).done();
+            signup(req, res);
         }
     });
 

@@ -31,6 +31,10 @@ describe('signup/login behavior', function(){
         expect(element(logoutButton + ':visible').count()).toBe(0);
     }
 
+    function expectAlerts() {
+        expect(element('.alert:visible').count()).not().toBe(0);
+    }
+
     function checkIt(input) {
         if (input.val() !== 'on') {
             input.check();
@@ -43,18 +47,22 @@ describe('signup/login behavior', function(){
         }
     }
 
+    function expectModal(visible) {
+        expect(element(modal+':visible').count()).toBe(visible ? 1 : 0);
+    }
+
 
     it('should allow me to create a new user', function(){
 
         // clicking the "login" button pops up the login modal
-        expect(element(modal + ':visible').count()).toBe(0);
+        expectModal(false);
         expectLoggedOut();
 
         element(loginButton).click();
 
         sleep(1);
 
-        expect(element(modal + ':visible').count()).toBe(1);
+        expectModal(true);
 
         input('username').enter(username);
         input('password').enter('password');
@@ -63,9 +71,9 @@ describe('signup/login behavior', function(){
 
         element(submit).click();
 
-        sleep(3);
+        sleep(1);
 
-        expect(element(modal+':visible').count()).toBe(0);
+        expectModal(false);
         expectLoggedIn();
     });
 
@@ -76,7 +84,7 @@ describe('signup/login behavior', function(){
 
         sleep(1);
 
-        expect(element(modal + ':visible').count()).toBe(1);
+        expectModal(true);
 
         input('username').enter(username);
         input('password').enter('password');
@@ -85,7 +93,7 @@ describe('signup/login behavior', function(){
 
         element(submit).click();
 
-        sleep(3);
+        sleep(1);
 
         expectLoggedIn();
         element(logoutButton).click();
@@ -107,16 +115,65 @@ describe('signup/login behavior', function(){
 
         element(submit).click();
 
-        sleep(3);
+        sleep(1);
 
-        expect(element('.alert:visible').count()).not().toBe(0);
-        expect(element(modal + ':visible').count()).toBe(1);
+        expectAlerts();
+        expectModal(true);
         expectLoggedOut();
-
 
     });
 
-    it('ignores case with email logins', function(){
+    it('should not allow me to sign up with mismatched passwords or short passwords', function(){
+        expectLoggedOut();
+        element(loginButton).click();
+        sleep(1);
+
+        input('username').enter("foo123@bar.com");
+        input('password').enter('password');
+        input('confirmPassword').enter('password123');
+
+        uncheckIt(input('alreadyHaveAccount'));
+
+        element(submit).click();
+
+        sleep(1);
+
+        expectLoggedOut();
+
+        input('password').enter('p');
+        input('confirmPassword').enter('p');
+
+        element(submit).click();
+
+        sleep(1);
+
+        expectAlerts();
+        expectLoggedOut();
+    });
+
+
+    it('should not allow me to re-register the same user', function(){
+        expectLoggedOut();
+        element(loginButton).click();
+        sleep(1);
+
+        input('username').enter(username);
+        input('password').enter('password');
+        input('confirmPassword').enter('password');
+
+        uncheckIt(input('alreadyHaveAccount'));
+
+        element(submit).click();
+
+        sleep(1);
+
+        expectAlerts();
+        expectModal(true);
+        expectLoggedOut();
+
+    });
+
+    it('ignores case with email logins (LC->UC)', function(){
         expectLoggedOut();
         element(loginButton).click();
         sleep(1);
@@ -132,10 +189,58 @@ describe('signup/login behavior', function(){
 
         element(submit).click();
 
-        sleep(3);
+        sleep(1);
 
-        expect(element('.alert:visible').count()).not().toBe(0);
-        expect(element(modal + ':visible').count()).toBe(1);
+        expectAlerts();
+        expectModal(true);
         expectLoggedOut();
+
+        // but we can sign in with the uppercase username
+
+        input('password').enter('password');
+        uncheckIt(input('alreadyHaveAccount'));
+
+        element(submit).click();
+
+        sleep(1);
+
+        expectLoggedIn();
+    });
+
+    it('ignores case with email logins (UC->LC)', function(){
+        expectLoggedOut();
+        element(loginButton).click();
+
+        var originalUsername = "NEW_" + username.toUpperCase();
+        input('username').enter(originalUsername);
+        input('password').enter('password');
+        input('confirmPassword').enter('password');
+
+        uncheckIt(input('alreadyHaveAccount'));
+
+        element(submit).click();
+
+        sleep(1);
+
+        expectLoggedIn();
+
+        element(logoutButton).click();
+
+        sleep(1);
+
+        expectLoggedOut();
+
+        element(loginButton).click();
+
+        sleep(1);
+
+        input('username').enter(originalUsername.toLowerCase());
+        input('password').enter('password');
+
+        checkIt(input('alreadyHaveAccount'));
+        element(submit).click();
+        sleep(1);
+
+        expectLoggedIn();
     });
 });
