@@ -5,11 +5,15 @@
 // base path, that will be used to resolve files and exclude
 basePath = '';
 
+// the following two are bugfixes according to
+// http://stackoverflow.com/questions/15665960/can-do-i-use-testacular-to-test-web-pages-that-are-not-not-on-my-localhost
+proxies = {'/': 'http://localhost:3000/'}; // assume your app is running on port 9000
+urlRoot = '/_karma_/';  // important, could be any non-trivial path
 
 // list of files / patterns to load in the browser
 files = [
-    JASMINE,
-    JASMINE_ADAPTER,
+    ANGULAR_SCENARIO,
+    ANGULAR_SCENARIO_ADAPTER,
     // explicitly use angular 1.1.3 for testing due to a bug in Angular 1.1.4+
     'src/client/lib/jquery-1.8.3.min.js',
     'src/client/lib/angular-1.1.3.min.js',
@@ -37,7 +41,7 @@ reporters = ['progress'];
 
 
 // web server port
-port = 3004;
+port = 9109;
 
 
 // cli runner port
@@ -50,11 +54,7 @@ colors = true;
 
 // level of logging
 // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-logLevel = LOG_DEBUG;
-
-
-// enable / disable watching file and executing tests whenever any file changes
-autoWatch = false;
+logLevel = LOG_INFO;
 
 
 // Start these browsers, currently available:
@@ -71,6 +71,10 @@ browsers = ['Chrome'];
 // If browser does not capture in given timeout [ms], kill it
 captureTimeout = 60000;
 
+
+
+// enable / disable watching file and executing tests whenever any file changes
+autoWatch = false;
 
 // Continuous Integration mode
 // if true, it capture browsers, run tests and exit

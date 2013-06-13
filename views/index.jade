@@ -14,41 +14,15 @@ block content
                 li(ng-click="$parent.selectedTabId = tab.id",ng-repeat="tab in tabs",ng-class="{active: tab.id == $parent.selectedTabId}")
                   a(href='#',ng-href='{{tab.getHref()}}',ng-bind='tab.title')
             .pull-right.ng-cloak(ng-controller="SignupLoginButtonController")
-              .btn.btn-inverse.pull-right.ng-cloak(data-target="#signup-login-modal",data-toggle="modal",
+              .small(ng-show="session.loggedIn")
+                | {{session.username}}
+              .btn.btn-inverse.pull-right.ng-cloak#login-btn(data-target="#signup-login-modal",data-toggle="modal",
                   ng-hide="session.loggedIn")
                 | Signup / Login
-              .btn.btn-inverse.pull-right.ng-cloak(ng-show="session.loggedIn",ng-click="logout()")
+              .btn.btn-inverse.pull-right.ng-cloak#logout-btn(ng-show="session.loggedIn",ng-click="logout()")
                 | Logout
     
       #main-view-container
         #main-view(ng-view)
 
-      #signup-login-modal.modal.hide.fade(ng-controller="SignupLoginController")
-        .modal-header
-          button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-          h3 Signup / Login
-        .modal-body
-          form#signup-login-form.form-horizontal
-            .control-group
-              label.control-label(for='inputEmail') Email
-              .controls
-                input#inputEmail(ng-model="username",type='email', placeholder='Email',
-                required="required")
-              label.control-label(for='inputPassword',required="required") Password
-              .controls
-                input#inputPassword(ng-model="password",type='password', placeholder='Password')
-              label.control-label(ng-hide="alreadyHaveAccount",for='confirmPassword',
-                  required="required") Confirm password
-              .controls(ng-hide="alreadyHaveAccount")
-                input#confirmPassword(ng-model="confirmPassword",type='password', placeholder='Confirm password')
-            .alert.alert-warning(ng-show="passwordWarning()")
-              | Passwords must match.
-            .control-group
-              .controls
-                label.checkbox
-                  input(type='checkbox',name="login",ng-model="alreadyHaveAccount")
-                  | I already have an account
-        .modal-footer
-          button.btn(href='#',data-dismiss="modal") Close
-          button.btn.btn-primary(data-dismiss="modal",type="submit",form="signup-login-form",ng-click="submit()")
-            | {{alreadyHaveAccount && 'Login' || 'Signup'}}
+      include blocks/signup-login-modal

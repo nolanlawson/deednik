@@ -12,6 +12,7 @@ function SessionService(restServer, constants) {
         restServer.session()
             .success(function(data){
                 self.loggedIn = data && data.success;
+                self.username = data && data.username;
             })
             .error(function(err){console.log("error: "+ err);});
     }

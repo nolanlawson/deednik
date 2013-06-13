@@ -10,12 +10,8 @@ var
         server           = require('http').createServer(app),
         path             = require('path'),
         _                = require('underscore'),
-        crypto           = require('crypto'),
-        passport         = require('passport'),
-        LocalStrategy    = require('passport-local').Strategy,
 
         // constants
-
         PRODUCTION      = (process.env.NODE_ENV !== 'development'),
         APP_INFO        = _.extend({production : PRODUCTION}, require('./../../package.json')),
         MAX_POST_SIZE   = 1024,
@@ -27,8 +23,7 @@ var
         SocketServer = require('./sockets/SocketServer.js'),
         ViewHandler  = require('./views/ViewHandler.js'),
         Post         = require('./model/Post.js'),
-        Functions    = require('./util/Functions.js'),
-        auth         = require('./routes/auth.js')(app, passport)
+        Functions    = require('./util/Functions.js')
         ;
 
 
@@ -38,40 +33,13 @@ app.use("/js", express['static'](path.join(__dirname, '../../build/js')));
 app.use(express.cookieParser());
 app.use(express.bodyParser());
 app.use(express.session({secret : 'does-not-matter-if-we-use-ssl'}));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(expressValidator);
-
 
 var dao = new DAO({production : true});
 dao.init();
 
-passport.use(new LocalStrategy(
-    function(username, password, done) {
+require('./routes/auth.js')(app, dao);
 
-        dao.findUserByUserGuid(username).then(function(user){
-
-            var digest = encrypt(password, user.salt);
-
-            if (digest !== user.digest) {
-                return done(null, false, { message : "Incorrect password."});
-            }
-
-            return done(null, user);
-
-        }, function(err){
-            return done(null, false, { message : "Incorrect username."});
-        }).done();
-    }
-));
-
-passport.serializeUser(function(user, done) {
-    done(null, user._id);
-});
-
-passport.deserializeUser(function(id, done) {
-    dao.findById(id).then(function(user){done(null, user);}, function(err){done(err);}).done();
-});
 
 var socketServer = new SocketServer();
 socketServer.init(server);
@@ -87,12 +55,6 @@ function getUserIpAddress(req) {
     return PRODUCTION ?
         (req.headers['x-forwarded-for'] || req.connection.remoteAddress) :
         req.headers['user-agent']; // every browser is its own user
-}
-
-function encrypt(password, salt) {
-    var hash = crypto.createHash('sha512');
-    hash.update(password + salt);
-    return hash.digest('base64');
 }
 
 app.post('/jsapi-v1/insertPost', function(req, res){
@@ -150,85 +112,6 @@ app.get('/jsapi-v1/findUserVotes', function(req, res){
         },function(err){
             res.json({error : err});
         }).done();
-});
-
-
-app.get('/jsapi-v1/logout', function(req, res){
-
-    console.log("use wants to log out: " + (req.user && req.user.userGuid));
-
-    if (req.user) {
-        req.logout();
-        res.json({success : true});
-    } else{
-        return res.json({error : true});
-    }
-});
-
-app.get('/jsapi-v1/session', function(req, res){
-    console.log("found user: " + (req.user && req.user.userGuid));
-
-    res.json({'session' : (req.user && true)});
-});
-
-app.post('/jsapi-v1/signupOrLogin', function(req, res, next){
-
-    req.assert('username', 'Invalid username').notEmpty().isEmail();
-    req.assert('password', 'Invalid password').notEmpty().isAlphanumeric();
-    req.assert('login', 'Invalid login').notNull();
-    req.sanitize('login').toBoolean();
-
-    if (req.validationErrors()) {
-        return res.json({error : req.validationErrors(true)});
-    }
-
-    var username = req.param('username');
-    var password = req.param('password');
-    var login = req.param('login');
-
-    if (login) {
-        passport.authenticate('local', function(err, user, info) {
-            if (err) {
-                console.log('got error: ' + err);
-                return res.json({error : true, info : info});
-            }
-            console.log('got user: ' + user);
-            req.login(user, function(err){
-                if (err) {
-                    console.log('got login error: ' + err);
-                    return res.json({error : true});
-                }
-                return res.json({success : true});
-            });
-
-        })(req, res, next);
-    } else { // signup
-        var salt = crypto.randomBytes(32).toString('base64');
-        var digest = encrypt(password, salt);
-
-        console.log('digest is ' + digest);
-
-        dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest}).then(
-            function(user) {
-                console.log('got user: ' + user);
-                req.login(user, function(err) {
-                    if (err) {
-                        console.log('got signup error: ' + err);
-                        return res.json({error : true});
-                    }
-                    req.login(user, function(err){
-                        if (err) {
-                            console.log('got signup error: ' + err);
-                            return res.json({error : true});
-                        }
-                        return res.json({success : true});
-                    });
-
-                });
-            }
-        ).done();
-    }
-
 });
 
 app.post('/jsapi-v1/postUserVotes', function(req, res){

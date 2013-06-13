@@ -10,6 +10,7 @@
     "strict": true,
     "globalstrict": true,
     "globals": {
+        "jQuery" : true,
         "angular": true,
         "io": true,
         "console": true,

@@ -51,18 +51,33 @@ Developer workflow
 In one shell, run
 
 ```
-grunt
+COUCHDB_PATH=http://username:password@localhost:5984 grunt
 ```
 
-to watch for changes and automatically re-test and re-build.
+to watch for changes and automatically lint, minify, run server unit tests, run client unit tests, and build.
 
 In another shell, run
 
 ```
-NODE_ENV=development supervisor src/server/server.js
+NODE_ENV=development COUCHDB_PATH=http://username:password@localhost:5984 supervisor src/server/server.js
 ```
 
 to watch for changes and redeploy on localhost:3000.
+
+In another shell, run
+
+```
+grunt karma:continuous
+```
+
+to launch Chrome (default browser) and run e2e tests.
+
+To run it purely from the command line with PhantomJS, you can do:
+
+```
+grunt karma:dev
+```
+
 
 [1]: http://www.apache.org/licenses/LICENSE-2.0.html
 [6]: http://www.hon.ch
