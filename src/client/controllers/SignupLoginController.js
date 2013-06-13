@@ -54,6 +54,7 @@ angular.module('deednik').controller('SignupLoginController', ['$scope', 'restSe
                     jQuery('#signup-login-modal').modal('hide'); // TODO: move this to directive
                 } else {
                     $scope.signinWarning = true;
+                    $scope.lastSigninError = (data && data.error);
                 }
                 $scope.submitting = false;
             })

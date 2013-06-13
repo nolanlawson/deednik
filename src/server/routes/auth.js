@@ -24,13 +24,13 @@ module.exports = function(app, dao) {
                 var digest = encrypt(password, user.salt);
 
                 if (digest !== user.digest) {
-                    return done(null, false, { message : "Incorrect password."});
+                    return done(null, false, { message : sharedConstants.ERRORS.LOGIN.BAD_PASSWORD});
                 }
 
                 return done(null, user);
 
             }, function(err){
-                return done(null, false, { message : "Incorrect username."});
+                return done(null, false, { message : sharedConstants.ERRORS.LOGIN.NO_USER});
             }).done();
         }
     ));
@@ -69,14 +69,17 @@ module.exports = function(app, dao) {
     function login(req, res, next) {
         passport.authenticate('local', function(err, user, info) {
             if (err) {
-                console.log('got error: ' + err);
-                return res.json({error : true, info : info});
+                console.log('got login error (#1): ' + err);
+                return res.json({error : err, info : info});
+            }
+            if (!user) {
+                return res.json({error : info.message});
             }
             console.log('got user: ' + (user && user.userGuid));
-            req.login(user, function(err){
+            req.login(user, function(err, info){
                 if (err) {
-                    console.log('got login error: ' + err);
-                    return res.json({error : true});
+                    console.log('got login error (#2): ' + err);
+                    return res.json({error : err, info : info});
                 }
                 return res.json({success : true, username : user.userGuid});
             });
@@ -96,20 +99,20 @@ module.exports = function(app, dao) {
 
         dao.findUserByUserGuid(username)
             .then(function(){
-                return res.json({error : "user already exists"});
+                return res.json({error : sharedConstants.ERRORS.SIGNUP.USER_EXISTS});
             }, function() {
                 dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest})
                     .then(function(user) {
                         console.log('got user: ' + user);
                         req.login(user, function(err) {
                             if (err) {
-                                console.log('got signup error: ' + err);
-                                return res.json({error : true});
+                                console.log('got signup error (#1): ' + err);
+                                return res.json({error : err});
                             }
-                            req.login(user, function(err){
+                            req.login(user, function(err, data){
                                 if (err) {
-                                    console.log('got signup error: ' + err);
-                                    return res.json({error : true});
+                                    console.log('got signup error (#2): ' + err);
+                                    return res.json({error : err, data: data});
                                 }
                                 return res.json({success : true, username : user.userGuid});
                             });
