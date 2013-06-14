@@ -15,7 +15,7 @@ describe('signup/login behavior', function(){
     });
 
     var username = "fake_" + new Date().getTime() + "@fake.com";
-    var uppercaseUsername = "FAKE_" + username.toUpperCase();
+    var uppercaseUsername = "fake_UPPERCASE_" + new Date().getTime() + "@fake.com";
 
     var modal = '#signup-login-modal';
     var loginButton = '#login-btn';
@@ -37,34 +37,8 @@ describe('signup/login behavior', function(){
         expect(element('.alert:visible').count()).not().toBe(0);
     }
 
-    function checkIt(value) {
-        sleep(1);
-        var future = element("input[ng-model='alreadyHaveAccount']").attr('checked');
-
-        future.execute(function(){
-
-            var checked = future.value;
-
-            console.log("checkIt(" + value + ") -> " + JSON.stringify(checked));
-
-            if (value ? !checked : checked) {
-                console.log("changing it to " + value);
-                input('alreadyHaveAccount').check();
-            }
-        });
-
-        sleep(2);
-
-    }
-
     function expectModal(visible) {
         expect(element(modal+':visible').count()).toBe(visible ? 1 : 0);
-    }
-
-
-    function getValue(future) {
-        future.execute(function(){});
-        return future.value;
     }
 
     it('should allow me to create a new user', function(){
@@ -82,10 +56,9 @@ describe('signup/login behavior', function(){
         input('username').enter(username);
         input('password').enter('password');
         input('confirmPassword').enter('password');
+        input('alreadyHaveAccount').setChecked(false);
 
         sleep(1);
-
-        checkIt(false);
 
         element(submit).click();
 
@@ -95,34 +68,18 @@ describe('signup/login behavior', function(){
         expectLoggedIn();
     });
 
-    it('ignores case with email logins (LC->UC)', function(){
-        expectLoggedOut();
-        element(loginButton).click();
-        sleep(1);
+    it("remembers my username when I've logged in before", function(){
 
-        // we can sign in with the uppercase username
-        input('username').enter(username.toUpperCase());
-        input('password').enter('password');
-
-        checkIt(true); //TODO: make checkIt() actually work
-
-        element(submit).click();
-
-        sleep(1);
-
-        expectLoggedIn();
-    });
-
-    it('ignores case with email logins (UC->LC) (part 1)', function(){
+        // create a new user, log in, then log out
         expectLoggedOut();
         element(loginButton).click();
 
+        var username = "fake_" + new Date().getTime() +"@bazbar.com";
 
-        input('username').enter(uppercaseUsername);
+        input('username').enter(username);
         input('password').enter('password');
         input('confirmPassword').enter('password');
-
-        checkIt(false);
+        input('alreadyHaveAccount').setChecked(false);
 
         element(submit).click();
 
@@ -135,20 +92,80 @@ describe('signup/login behavior', function(){
         sleep(1);
 
         expectLoggedOut();
-    });
 
-    it('ignores case with email logins (UC->LC) (part 2)', function(){
+        sleep(1);
+
+        // I reload my browser
+        browser().reload();
+
+        sleep(1);
+
+        // and now it welcomes me back with my username already filled in
+        // (but not the password, of course)
+
         expectLoggedOut();
 
         element(loginButton).click();
 
         sleep(1);
 
+        expect(input('username').val()).toBe(username);
+        expect(input('password').val()).toBeFalsy();
+        expect(element('input[ng-model=alreadyHaveAccount]').attr('checked')).toBeTruthy();
+
+    });
+
+    it('ignores case with email logins (UC->LC)', function(){
+
+        expectLoggedOut();
+        element(loginButton).click();
+
+
+        // it allows me to register with an uppercase username
+        input('username').enter(uppercaseUsername);
+        input('password').enter('password');
+        input('confirmPassword').enter('password');
+        input('alreadyHaveAccount').setChecked(false);
+
+        element(submit).click();
+
+        sleep(1);
+
+        expectLoggedIn();
+
+        element(logoutButton).click();
+
+        sleep(1);
+
+        expectLoggedOut();
+
+        element(loginButton).click();
+
+        sleep(1);
+
+        // and I can sign in like a normal user with the lowercase version of that username
         input('username').enter(uppercaseUsername.toLowerCase());
         input('password').enter('password');
-
-        checkIt(true);
+        input('alreadyHaveAccount').setChecked(true);
         element(submit).click();
+        sleep(1);
+
+        expectLoggedIn();
+    });
+
+    it('ignores case with email logins (LC->UC)', function(){
+        expectLoggedOut();
+        element(loginButton).click();
+        sleep(1);
+
+        // we can sign in with the uppercase username
+        input('username').enter(username.toUpperCase());
+        input('password').enter('password');
+
+        input('alreadyHaveAccount').setChecked(true); //TODO: make checkIt() actually work
+
+        element(submit).click();
+
         sleep(1);
 
         expectLoggedIn();
@@ -166,7 +183,7 @@ describe('signup/login behavior', function(){
         input('username').enter(username);
         input('password').enter('password');
 
-        checkIt(true);
+        input('alreadyHaveAccount').setChecked(true);
 
         element(submit).click();
 
@@ -188,7 +205,7 @@ describe('signup/login behavior', function(){
         input('username').enter(username);
         input('password').enter('badPassword!!');
 
-        checkIt(true);
+        input('alreadyHaveAccount').setChecked(true);
 
         element(submit).click();
 
@@ -200,7 +217,7 @@ describe('signup/login behavior', function(){
 
     });
 
-    it('should not allow me to sign up with mismatched passwords or short passwords', function(){
+    it('should not allow me to sign up with mismatched passwords or short/long passwords', function(){
         expectLoggedOut();
         element(loginButton).click();
         sleep(1);
@@ -209,7 +226,7 @@ describe('signup/login behavior', function(){
         input('password').enter('password');
         input('confirmPassword').enter('password123');
 
-        checkIt(false);
+        input('alreadyHaveAccount').setChecked(false);
 
         element(submit).click();
 
@@ -219,6 +236,24 @@ describe('signup/login behavior', function(){
 
         input('password').enter('p');
         input('confirmPassword').enter('p');
+
+        element(submit).click();
+
+        sleep(1);
+
+        expectAlerts();
+        expectLoggedOut();
+
+        var longPassword = 'password that is way too long password that is way too long ' +
+            'password that is way too long password that is way too long password that is way too long ' +
+            'password that is way too long password that is way too long password that is way too long ' +
+            'password that is way too long password that is way too long password that is way too long ' +
+            'password that is way too long password that is way too long password that is way too long ' +
+            'password that is way too long password that is way too long password that is way too long ' +
+            'password that is way too long password that is way too long password that is way too long ';
+
+        input('password').enter(longPassword);
+        input('confirmPassword').enter(longPassword);
 
         element(submit).click();
 
@@ -238,11 +273,11 @@ describe('signup/login behavior', function(){
         input('password').enter('password');
         input('confirmPassword').enter('password');
 
-        checkIt(false);
+        input('alreadyHaveAccount').setChecked(false);
 
         element(submit).click();
 
-        sleep(1);
+        sleep(2);
 
         expectAlerts();
         expectModal(true);
@@ -250,50 +285,4 @@ describe('signup/login behavior', function(){
 
     });
 
-    it("remembers my username when I've logged in before", function(){
-
-        // create a new user, log in, then log out
-        expectLoggedOut();
-        element(loginButton).click();
-
-        var username = "fake_" + new Date().getTime() +"@bazbar.com";
-
-        input('username').enter(username);
-        input('password').enter('password');
-        input('confirmPassword').enter('password');
-
-        element(submit).click();
-
-        sleep(1);
-
-        expectLoggedIn();
-
-        element(logoutButton).click();
-
-        sleep(1);
-
-        expectLoggedOut();
-
-        sleep(1);
-
-        // I reload my browser
-
-        browser().reload();
-
-        sleep(1);
-
-        // and now it welcomes me back with my username already filled in
-        // (but not the password, of course)
-
-        expectLoggedOut();
-
-        element(loginButton).click();
-
-        sleep(1);
-
-        expect(input('username').val()).toBe(username);
-        expect(input('password').val()).toBeFalsy();
-        //expect(input('alreadyHaveAccount').val()).toBe('off');
-
-    });
 });

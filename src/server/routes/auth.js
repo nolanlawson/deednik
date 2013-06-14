@@ -103,7 +103,7 @@ module.exports = function(app, dao) {
             }, function() {
                 dao.upsertUser(username, {userGuid : username, salt : salt, digest : digest})
                     .then(function(user) {
-                        console.log('got user: ' + user);
+                        console.log('got user: ' + (user && user.userGuid));
                         req.login(user, function(err) {
                             if (err) {
                                 console.log('got signup error (#1): ' + err);
