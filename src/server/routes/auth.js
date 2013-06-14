@@ -128,7 +128,7 @@ module.exports = function(app, dao) {
         req.assert('password', 'Invalid password').notEmpty().isAlphanumeric().
             len(sharedConstants.MIN_PASSWORD_LENGTH, sharedConstants.MAX_PASSWORD_LENGTH);
         req.assert('login', 'Invalid login').notNull();
-        req.sanitize('username').trim().toLowerCase();
+        req.sanitize('username').trim();
         req.sanitize('login').toBoolean();
 
         if (req.validationErrors()) {
