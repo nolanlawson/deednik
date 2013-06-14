@@ -12,7 +12,8 @@ urlRoot = '/_karma_/';  // important, could be any non-trivial path
 
 // list of files / patterns to load in the browser
 files = [
-    ANGULAR_SCENARIO,
+    //ANGULAR_SCENARIO,
+    'src/client/lib/angular-scenario-1.0.3.min.js',
     ANGULAR_SCENARIO_ADAPTER,
     // explicitly use angular 1.1.3 for testing due to a bug in Angular 1.1.4+
     'src/client/lib/jquery-1.8.3.min.js',
