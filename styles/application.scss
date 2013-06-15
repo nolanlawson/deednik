@@ -18,6 +18,29 @@ footer {
     margin-left: 10px;
 }
 
+.main-logo-font {
+    @include main-logo-font;
+}
+
+.navbar .brand.main-logo {
+    //font-size: 24px; //  up from 20px
+}
+
+ul.horizontal-navbar {
+    list-style-type: none;
+    margin: 0;
+}
+
+ul.horizontal-navbar li {
+    float: left;
+}
+
+.nav-username {
+    padding-right: 10px;
+    line-height:40px;
+    color : #fff;
+}
+
 #main-container {
     // offset for the navigational bar
 

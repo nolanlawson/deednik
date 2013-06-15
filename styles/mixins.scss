@@ -17,13 +17,16 @@
     transition: $trans;
 }
 
+@mixin main-logo-font() {
+    font-family: 'Lobster Two', cursive;
+}
+
 @mixin main-logo($radius) {
     @include rounded-corners($radius);
-
-    font-family: 'Chela One', cursive;
+    @include main-logo-font;
     background : $logoBg;
-    padding : 0.1em 0.5em;
-    font-weight : normal;
+    padding : 0.1em 0.2em;
+    font-weight : bold;
 }
 
 @mixin text-border($color, $width) {
