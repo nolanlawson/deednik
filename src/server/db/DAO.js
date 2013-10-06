@@ -62,7 +62,7 @@ function DAO(options) {
      * This way, migrations are handled automagically!  Yay!
      */
     function createViewsIfNecessary() {
-        return Q.allResolved(views.map(function(view) {
+        return Q.allSettled(views.map(function(view) {
 
             var deferred = Q.defer();
 
